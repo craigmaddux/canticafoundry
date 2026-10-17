@@ -7,7 +7,7 @@ import { norm, toPlain, unlink, linkify, entryText, buildIndex, search, paragrap
 // Load the real ledger data, exactly as the website and the system do.
 const ctx = { window: {} };
 vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(new URL("../../ledger-data.js", import.meta.url), "utf8"), ctx);
+vm.runInContext(fs.readFileSync(new URL("../lore-src/ledger-data.js", import.meta.url), "utf8"), ctx);
 const entries = ctx.window.LEDGER;
 const kinds = ctx.window.LEDGER_KINDS.map(k => k.id);
 const byId = Object.fromEntries(entries.map(e => [e.id, e]));

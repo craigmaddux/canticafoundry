@@ -10,7 +10,7 @@ import { findBrief, briefSkills, suggestionsFor, giftFor, commendationSuggestion
 // Load the real data, exactly as the website and the system do.
 const ctx = { window: {} };
 vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(new URL("../../station-briefs-data.js", import.meta.url), "utf8"), ctx);
+vm.runInContext(fs.readFileSync(new URL("../lore-src/station-briefs-data.js", import.meta.url), "utf8"), ctx);
 const BRIEFS = Array.from(ctx.window.STATION_BRIEFS);
 
 test("there are ten Briefs with unique ids and all their parts", () => {

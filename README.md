@@ -2,14 +2,14 @@
 
 A native system for **Cantica**, a generational ark ship run by a tired AI that is also an angel of Order. Experimental: the table plays Savage Worlds, and this is for prototyping the rules in Foundry.
 
-Implements spec **v0.6**, plus Scene Cards, Register With Gloss and the Ledger. Targets Foundry **v14** (minimum v13). Optional: the **Dice So Nice** module for amber, white and violet dice.
+Implements the Cantica rules (see `system-design-changelog.md` in the design notes), plus Scene Cards, Dockets, Register With Gloss, Station Briefs and the Ledger. Targets Foundry **v14** (minimum v13). Optional: the **Dice So Nice** module for amber, white and violet dice.
 
 ## Install
 
 Setup → Game Systems → Install System → paste the manifest URL:
 
 ```
-https://github.com/craigmaddux/cantica/releases/latest/download/system.json
+https://github.com/craigmaddux/canticafoundry/releases/latest/download/system.json
 ```
 
 New releases appear as in-app updates. On Molten, the same URL works; no CloudCommander upload is needed.
@@ -84,20 +84,23 @@ Gloss's searchable entries, inside Foundry: open it from the **Ledger** button i
 - **Import Cantica lore** (GM, one click) makes an **NPC** for every person and a **Scene Card** for every place, in a "Cantica" folder. Rating, Tags and Tier are left for you to set. Running it again only adds what's new; nothing you've edited is touched.
 - Imported people and places show their picture in the Ledger. **Drag the picture onto the tabletop**, or use **Show to players** to put it on everyone's screen.
 
-The entries come from the website's `ledger-data.js`, so there's one set to maintain. Releases bundle that file and its art into the system; for a local copy of the repo, run `node foundry/scripts/bundle-lore.mjs` first.
+The lore (the Ledger's entries, the Station Briefs and the art they use) is written for the website, and this repository keeps its own copy in `lore-src/` so it builds on its own. When the website's lore changes, run `node scripts/sync-lore.mjs --site <path to the website checkout>` and commit the result. Releases bundle `lore-src/` into the system; for a local copy of the repo, run `node scripts/bundle-lore.mjs` first.
 
 ## Not in this version
 
-Docket tracking (and cumulative challenges across several cards), Summary Proceedings helpers, dedicated buttons for the Reclassify Stamp spend (Amend is on Scene Cards, Countersign on the sheet), Gear items, compendiums.
+Compendiums, and anything in the design notes marked "later".
 
 ## Development
 
-There is no build step. The system lives in `foundry/` inside the `cantica` repo (the website is at the repo root). Symlink or copy `foundry/` into Foundry's `Data/systems/cantica` (after `bundle-lore`), or push a tag to build a release.
+There is no build step. This repository is the system: symlink or copy it into Foundry's `Data/systems/cantica` (after `bundle-lore`), or push a tag to build a release.
 
 ```
-cd foundry && npm test   # unit tests: dice rules, Grade table, odds table, Notice track, scenes, lore search
-node foundry/scripts/bundle-lore.mjs   # copy the ledger data and its art into foundry/lore/
-git tag v0.5.0 && git push --tags      # builds system.json + system.zip on GitHub
+npm test                          # unit tests: dice rules, Grade table, odds table, Notice track, scenes, lore search, Briefs
+node scripts/bundle-lore.mjs      # build lore/ (ledger data, Briefs and art) from lore-src/
+node scripts/sync-lore.mjs --site ../cantica   # refresh lore-src/ from the website repository
+git tag v0.11.0 && git push --tags   # builds system.json + system.zip on GitHub
 ```
+
+The release workflow (`.github/workflows/release.yml`) runs the tests, stamps the version and this repository's URLs into `system.json`, bundles the lore, zips the system and publishes it.
 
 `module/rules.mjs`, `module/progression.mjs`, `module/notices.mjs`, `module/scene.mjs` and `module/lore-text.mjs` are pure functions with no Foundry dependency, so they are tested in Node.

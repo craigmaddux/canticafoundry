@@ -1,6 +1,6 @@
 /**
  * Station Briefs: player-facing primers for people who want help building a character with a
- * class-like feel. The data is the website's station-briefs-data.js (window.STATION_BRIEFS, bundled into
+ * class-like feel. The data is station-briefs-data.js (written for the website and copied here by scripts/sync-lore.mjs) (window.STATION_BRIEFS, bundled into
  * the system with the lore), so the website and Register With Gloss read the same Briefs.
  *
  * A Brief is a starting point, not a class. Picking one fills in Station and the skills (the standard

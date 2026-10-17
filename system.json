@@ -45,9 +45,9 @@
     "distance": 1,
     "units": "m"
   },
-  "url": "https://github.com/craigmaddux/cantica",
-  "manifest": "https://github.com/craigmaddux/cantica/releases/latest/download/system.json",
-  "download": "https://github.com/craigmaddux/cantica/releases/download/v0.10.0/system.zip",
+  "url": "https://github.com/craigmaddux/canticafoundry",
+  "manifest": "https://github.com/craigmaddux/canticafoundry/releases/latest/download/system.json",
+  "download": "https://github.com/craigmaddux/canticafoundry/releases/download/v0.10.0/system.zip",
   "socket": true,
   "scripts": [
     "lore/ledger-data.js",
