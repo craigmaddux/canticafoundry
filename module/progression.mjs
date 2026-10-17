@@ -67,13 +67,17 @@ export function skillChange({ from, to, creation, unspent = 0, spent = 0, gm = f
 
 /* ── Traits (ranked 1-2) ── */
 
-export const TRAIT_BASE = 3;
+/** Station plus two open Traits at creation (spec v0.14); characters made earlier keep their third. */
+export const TRAIT_BASE = 2;
 export const TRAIT_MAX = 6;
 export const TRAIT_COST = 4;
 
 export const TRAIT_RANK_MAX = 2;
 export const TRAIT_RANK_COST = 6;
 export const TRAIT_RANK_GRADE = 3;
+
+/** Keeping a piece of Bound gear for good: 3 Tenure, with the GM's approval (spec v0.14, provisional). */
+export const GEAR_KEEP_COST = 3;
 
 /** Buying another open Trait slot: 4 Tenure, to a maximum of six. */
 export function traitSlotPurchase({ slots, unspent }) {

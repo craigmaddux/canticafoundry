@@ -25,6 +25,7 @@ import { importScenario } from "./module/scenario.mjs";
 import { registerCards, listenForCards, activeCard, detectCard, setActiveCard } from "./module/cards.mjs";
 import { registerScrutiny, listenForScrutiny, showScrutiny, getScrutiny, gainScrutiny } from "./module/scrutiny.mjs";
 import { registerHum, listenForHum, showHum, getHum } from "./module/hum-tracker.mjs";
+import { announceSkillMoves } from "./module/migrations.mjs";
 
 Hooks.once("init", () => {
   console.log(`${SYSTEM_ID} | Initializing the Cantica system`);
@@ -96,7 +97,6 @@ Hooks.once("init", () => {
     `systems/${SYSTEM_ID}/templates/app/scrutiny.hbs`,
     `systems/${SYSTEM_ID}/templates/app/hum.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/roll.hbs`,
-    `systems/${SYSTEM_ID}/templates/chat/clause.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/notice.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/amend.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/grade.hbs`,
@@ -114,6 +114,7 @@ Hooks.once("ready", () => {
   reconcilePanels();
   if (game.settings.get(SYSTEM_ID, "showScrutiny")) showScrutiny();
   showHum(); // does nothing unless you are the GM
+  announceSkillMoves(); // the active GM only
 });
 
 // Dice So Nice is optional; its hook simply never fires without it.

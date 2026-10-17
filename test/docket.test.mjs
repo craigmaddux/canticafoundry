@@ -51,7 +51,10 @@ test("how it ends: full works; at the Deadline half or more half works; less fai
   assert.equal(outcome({ ...base, successes: 12 }), "works");
   const late = { ...base, round: 4 };
   assert.equal(outcome({ ...late, successes: 5 }), "half");
-  assert.equal(outcome({ ...late, successes: 9 }), "half");
+  assert.equal(outcome({ ...late, successes: 7 }), "half");
+  // Three quarters or more: it works, at a real cost.
+  assert.equal(outcome({ ...late, successes: 8 }), "cost");
+  assert.equal(outcome({ ...late, successes: 9 }), "cost");
   assert.equal(outcome({ ...late, successes: 4 }), "fails");
   // filling the last box in time works even with rounds to spare
   assert.equal(status({ ...base, round: 2, successes: 10 }), "full");

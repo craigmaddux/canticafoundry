@@ -22,7 +22,6 @@
           <span class="counter-value">{{system.stamps}}</span>
           <button type="button" data-action="adjustStamps" data-delta="1" {{#unless editable}}disabled{{/unless}}>+</button>
         </div>
-        <button type="button" class="cite" data-action="citeClause" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Stamps.Cite"}}</button>
         <button type="button" class="cite" data-action="countersign" title="{{localize 'CANTICA.Stamps.CountersignHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Stamps.Countersign"}}</button>
         <button type="button" class="cite" data-action="startSession" title="{{localize 'CANTICA.Stamps.SessionHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Stamps.Session"}} ({{system.stampsPerSession}})</button>
       </div>
@@ -83,16 +82,19 @@
           <h2>{{localize "CANTICA.Gear.Heading"}}
             <button type="button" class="add" data-action="addGear" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Gear.Add"}}</button>
           </h2>
-          <p class="hint">{{localize "CANTICA.Gear.Hint"}}</p>
+          <p class="hint">{{localize "CANTICA.Gear.Hint"}}{{#if gearCreationNote}} {{localize "CANTICA.Gear.CreationNote"}}{{/if}}</p>
           {{#each gear}}
           <div class="gear-item">
             <input type="text" name="system.gear.{{index}}.name" value="{{name}}" placeholder="{{localize 'CANTICA.Gear.NamePlaceholder'}}" {{#unless @root.editable}}disabled{{/unless}}>
             <input type="text" name="system.gear.{{index}}.note" value="{{note}}" placeholder="{{localize 'CANTICA.Gear.NotePlaceholder'}}" {{#unless @root.editable}}disabled{{/unless}}>
             <div class="gear-row">
               <label class="check bound-toggle" title="{{localize 'CANTICA.Gear.BoundHint'}}">
-                <input type="checkbox" name="system.gear.{{index}}.bound" {{checked bound}} {{#unless @root.editable}}disabled{{/unless}}>
+                <input type="checkbox" name="system.gear.{{index}}.bound" {{checked bound}} {{#unless @root.editable}}disabled{{/unless}} {{#if boundLocked}}disabled{{/if}}>
                 <span>{{localize "CANTICA.Gear.Bound"}}</span>
               </label>
+              {{#if bound}}{{#if kept}}<span class="tag gear-kept" title="{{localize 'CANTICA.Gear.KeptHint'}}">{{localize "CANTICA.Gear.Kept"}}</span>
+              {{else}}<span class="tag gear-loan" title="{{localize 'CANTICA.Gear.OnLoanHint'}}">{{localize "CANTICA.Gear.OnLoan"}}</span>{{/if}}{{/if}}
+              {{#if canKeep}}<button type="button" class="keep" data-action="keepGear" data-id="{{id}}" title="{{localize 'CANTICA.Gear.KeepHint'}}">{{localize "CANTICA.Gear.Keep" cost=@root.keepCost}}</button>{{/if}}
               <button type="button" data-action="deleteGear" data-id="{{id}}" title="{{localize 'CANTICA.Gear.Delete'}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>

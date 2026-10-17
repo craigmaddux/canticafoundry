@@ -90,8 +90,8 @@ export function placeNotice(track, tier, kind, notice) {
 }
 
 /**
- * Reclassify (a Stamp spent as a Notice lands): it lands one step lower. A Major lands as a Minor; a Minor doesn't land
- * at all. Returns the kind that lands, or null for none.
+ * Reclassify (a Stamp spent as a Major lands on you directly): it lands as a Minor. Since v0.11 only a direct
+ * Major can be Reclassified; a Minor has nothing lower to become (null). Returns the kind that lands.
  * @param {"minor"|"major"} kind
  * @returns {"minor"|"major"|null}
  */

@@ -1,5 +1,6 @@
 import { SYSTEM_ID } from "./config.mjs";
 import { amendScene } from "./cards.mjs";
+import { locationsOf } from "./scene.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -105,6 +106,11 @@ class ScenePanel extends HandlebarsApplicationMixin(ApplicationV2) {
       isGM: game.user.isGM,
       shown: isShown(card.id),
       traits: card.system.traits.filter(t => t.name).map(t => ({ ...t, hasNote: Boolean(t.note) })),
+      links: card.system.links,
+      // A Section's card also shows the Traits of the Location it is part of: a roll here may use them too.
+      locations: locationsOf(card, id => game.actors.get(id))
+        .map(place => ({ name: place.name, traits: place.system.traits.filter(t => t.name).map(t => ({ ...t, hasNote: Boolean(t.note) })) }))
+        .filter(place => place.traits.length),
       // A Docket is the GM's alone; the table sees only how many successes the scene has had.
       hasTally: card.system.docket.open,
       tally: card.system.docket.successes

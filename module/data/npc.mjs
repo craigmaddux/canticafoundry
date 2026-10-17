@@ -1,12 +1,12 @@
 import { NPC_TIERS } from "../config.mjs";
 import { noticeTrackField, migrateOldNotices } from "./track.mjs";
+import { migrateNpcTags } from "../npc-tags.mjs";
 
 const { NumberField, StringField } = foundry.data.fields;
 
 /**
- * Stat block: Name, Rating, Tags (two; a Major has three, one of them the Action Tag), Tier. The GM never rolls; NPCs act through
- * their Rating, which is used directly as the Difficulty of any roll against or
- * to resist them.
+ * Stat block: Name, Rating, Tier, Role Tag, other Tags (spec v0.11). The GM never rolls; NPCs act through their Rating,
+ * which is used directly as the Difficulty of any roll against or to resist them.
  */
 export default class NpcData extends foundry.abstract.TypeDataModel {
   static LOCALIZATION_PREFIXES = ["CANTICA.Npc"];
@@ -15,13 +15,11 @@ export default class NpcData extends foundry.abstract.TypeDataModel {
     return {
       // 1 ordinary, 2 tough, 3 nemesis, 4 reserved.
       rating: new NumberField({ required: true, nullable: false, integer: true, min: 1, max: 4, initial: 1 }),
-      // What they are good at. When a Tag applies, the player loses a die.
-      tag1: new StringField({ required: true, blank: true, initial: "" }),
-      tag2: new StringField({ required: true, blank: true, initial: "" }),
-      // A Major has a third. Only one Tag ever applies to a roll.
-      tag3: new StringField({ required: true, blank: true, initial: "" }),
-      // Which Tag (1-3) is their Action Tag: what they do when they act (Crack Shot, Silver Tongue).
-      actionTag: new NumberField({ required: true, nullable: false, integer: true, min: 1, max: 3, initial: 1 }),
+      // Who they are (Veteran Proctor, Liturgist Cantor). Acting within that role, or against them in it: the player loses a die.
+      roleTag: new StringField({ required: true, blank: true, initial: "" }),
+      // What else they're good at: a Minor has one, a Major two, a Background none. Only one Tag ever applies to a roll.
+      otherTag1: new StringField({ required: true, blank: true, initial: "" }),
+      otherTag2: new StringField({ required: true, blank: true, initial: "" }),
       // Background: any Notice takes them out. Minor: one Minor box. Major: the full track.
       tier: new StringField({ required: true, choices: NPC_TIERS, initial: "minor" }),
       notices: noticeTrackField(),
@@ -30,6 +28,7 @@ export default class NpcData extends foundry.abstract.TypeDataModel {
   }
 
   static migrateData(source) {
-    return super.migrateData(migrateOldNotices(source));
+    // v0.11: tag1-tag3 and the Action Tag become the Role Tag and the other Tags.
+    return super.migrateData(migrateNpcTags(migrateOldNotices(source)));
   }
 }

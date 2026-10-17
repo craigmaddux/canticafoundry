@@ -32,25 +32,28 @@
       "mind": "Mind",
       "hands": "Hands",
       "people": "People",
-      "worlds": "Worlds",
-      "divine": "Divine"
+      "worlds": "Worlds"
     },
     "Skill": {
       "athletics": {
         "label": "Athletics",
-        "hint": "Climbing, running, enduring. Also resisting pain."
+        "hint": "Climbing, running, enduring pain and exhaustion. Resist pain with it."
       },
       "scuffle": {
         "label": "Scuffle",
-        "hint": "Fighting."
+        "hint": "Hand-to-hand and melee weapons."
       },
       "sneak": {
         "label": "Sneak",
         "hint": "Stealth and sleight of hand."
       },
+      "aim": {
+        "label": "Aim",
+        "hint": "Anything you point or throw: stunners, flare guns, a well-thrown spanner."
+      },
       "lore": {
         "label": "Lore",
-        "hint": "History, theology, culture, the founders."
+        "hint": "History, theology, culture, politics, the founders, the rites and songs of Compline; also rumors, who to ask, which stall knows a guy."
       },
       "science": {
         "label": "Science",
@@ -58,11 +61,19 @@
       },
       "notice": {
         "label": "Notice",
-        "hint": "Perception and investigation."
+        "hint": "Perception, investigation, reading people, spotting lies."
+      },
+      "composure": {
+        "label": "Composure",
+        "hint": "Fear, temptation, concentration under strain, the Bound's feelings bleeding into you. Resist fear and the Bound with it."
+      },
+      "systems": {
+        "label": "Systems",
+        "hint": "Terminals, data, sensors, code; getting a Bound-run interface to do what you want without asking nicely."
       },
       "hullcraft": {
         "label": "Hullcraft",
-        "hint": "Repair, engineering, systems; also making things."
+        "hint": "Repair, engineering, Bound machinery; also making things."
       },
       "mend": {
         "label": "Mend",
@@ -70,23 +81,23 @@
       },
       "pilot": {
         "label": "Pilot",
-        "hint": "Shuttles, vehicles, navigation."
+        "hint": "Flying and driving: shuttles, vehicles."
       },
       "persuade": {
         "label": "Persuade",
-        "hint": "Talking, haggling, reading people."
+        "hint": "Talking, haggling, lying, intimidating, performing. Resist by arguing back."
       },
       "procedure": {
         "label": "Procedure",
-        "hint": "Bureaucracy, law, forms, the Checklist. Also resisting bureaucratic pressure."
+        "hint": "Bureaucracy, law, forms, the Checklist, the official record. Resist bureaucratic pressure with it."
       },
       "survival": {
         "label": "Survival",
-        "hint": "Fieldcraft, foraging, shelter, hostile environments."
+        "hint": "Fieldcraft, foraging, shelter, hostile environments, animals."
       },
-      "attune": {
-        "label": "Attune",
-        "hint": "Sensing, soothing and coaxing the Bound. Also resisting the Bound."
+      "navigate": {
+        "label": "Navigate",
+        "hint": "Star charts, plotting jumps, finding your way across a strange world or through the Sump."
       },
       "Costs": "0→1: 1 · 1→2: 3",
       "CostHint": "Skills are bought with unspent Tenure. They stop at rating 2.",
@@ -106,12 +117,7 @@
     },
     "Stamps": {
       "Label": "Stamps",
-      "Hint": "Earned when any Hindrance bites, sometimes from a Margin of Grace, and for withdrawing from a scene. Spend: Expedite (+1 die before a roll), Refile (reroll one failed die after it, from its chat card), Countersign (give a Stamp to an ally, to use as their Expedite or Refile), Reclassify (downgrade a Notice as it lands), Cite a Clause, Amend the Scene.",
-      "Cite": "Cite a Clause",
-      "CiteTitle": "Cite a Clause",
-      "CitePrompt": "Which rule do you declare exists and applies here?",
-      "Cites": "Cites a Clause",
-      "CiteNote": "Binding, and it helps. The GM adds one detail of how it actually reads.",
+      "Hint": "Earned on every roll with a Hindrance (or the Drawback) in play, on a Margin of Grace, and for withdrawing from a scene. Spend: Expedite (+1 die before a roll), Refile (reroll one failed white die after it, from its chat card), Countersign (give a Stamp to an ally, to use as their Expedite or Refile), Reclassify (a Major that lands on you directly becomes a Minor), Amend the Scene (add a Trait to it), Negate (cancel the GM's Complication).",
       "None": "No Stamps to spend.",
       "Session": "Start session",
       "SessionHint": "Stamps up to what your Grade begins each session with: 2, and one more at Grades III, VI and IX.",
@@ -189,7 +195,7 @@
       "Escalate": "Both Minor boxes are full. This Notice escalates to a Major. Continue?",
       "EscalateOut": "Both Minor boxes and both Major boxes are full. This Notice takes you out of the scene (Final). Continue?",
       "Reclassify": "Reclassify (spend a Stamp)",
-      "ReclassifyHint": "Downgrade this Notice as it lands: a Major lands as a Minor, a Minor doesn't land at all.",
+      "ReclassifyHint": "Spend a Stamp: this Major lands on you as a Minor instead. Only a Major that lands directly (a Commended or Denied result), not a Minor that overflows.",
       "Reclassified": "Reclassified with a Stamp: one step lower.",
       "ReclassifiedAway": "{name} spends a Stamp to Reclassify: \"{notice}\" does not land.",
       "Withdraw": "Withdraw",
@@ -212,12 +218,15 @@
       "Rating": "Rating",
       "RatingHint": "Used directly as the Difficulty of any roll against this NPC, or to resist them. 1 ordinary, 2 tough, 3 nemesis, 4 reserved.",
       "Tags": "Tags",
-      "TagsHint": "What they are good at. A Background or Minor has two Tags; a Major has three. When a Tag applies, the player loses a die. Only one Tag applies to any roll.",
+      "TagsHint": "When a Tag applies, the player loses a die (NPCs never roll, so their edge is always the player's −1). Only one Tag applies to any roll. Make a dangerous NPC tougher with a higher Rating, not more Tags.",
       "Tag": "Tag",
       "Tier": "Tier",
       "Major": "Major",
-      "ActionTag": "Action Tag",
-      "ActionTagHint": "What they do when they act (Crack Shot, Silver Tongue). The others cover everything else. Make a dangerous NPC tougher with a higher Rating, not more Tags."
+      "RoleTag": "Role Tag",
+      "RoleTagHint": "Who they are. When they act within that role, or a player acts against them in it, the player loses a die.",
+      "RolePlaceholder": "Veteran Proctor",
+      "OtherTag": "Other Tag",
+      "ExtraTag": "This NPC has more Tags than its tier carries (Background: the Role Tag only; Minor: one other; Major: two). They're kept, but shown only at a tier that has room."
     },
     "NpcTier": {
       "background": "Background",
@@ -231,7 +240,8 @@
       "0": "Easy",
       "1": "Standard",
       "2": "Hard",
-      "3": "Heroic"
+      "3": "Heroic",
+      "4": "Unprecedented"
     },
     "Pool": {
       "Title": "Build a Pool",
@@ -244,7 +254,7 @@
       "GiftNote": "Adds no die. Turns one white die violet (or adds one violet die to a pool that is only the Margin).",
       "Bound": "Bound gear",
       "Margin": "The Margin",
-      "EncumbranceNote": "If any Hindrance is in play, the Margin of Error and any Dissonance both widen to 1–2, and an Error earns a Stamp. Hindrances never add dice.",
+      "EncumbranceNote": "If any Hindrance is in play you earn a Stamp, whatever the dice show, and the Margin of Error widens to 1–2. On an Error the GM complicates the scene through it. Hindrances never add dice, and never touch violet dice.",
       "Dice": "dice",
       "Breakdown": "{amber} amber · {white} white · {violet} violet",
       "Roll": "Roll",
@@ -269,7 +279,6 @@
       "BoundNote": "Gear running on divine infrastructure turns one white die violet. At most one die from gear and one from the Gift.",
       "Gear": "Gear",
       "GearHint": "Gear never adds dice: the right tools let you roll at all.",
-      "ErrorAndDissonanceRange": "Margin of Error and Dissonance on {range}",
       "Expedite": "Expedite",
       "ExpediteNote": "Spend a Stamp for +1 die before you roll. Once per roll. (After the roll, Refile rerolls a failed die.)",
       "Penalty": "Penalty",
@@ -287,7 +296,11 @@
         "act": "Acting against someone (their Rating is the Difficulty)",
         "resist": "Resisting someone, or a hazard",
         "record": "A Request for Record (Procedure)"
-      }
+      },
+      "GreaterBound": "Greater Bound",
+      "GreaterBoundNote": "The GM's call, for an especially large or volatile Bound: Dissonance on 1–2.",
+      "HindranceStamp": "+1 Stamp for the Hindrance",
+      "DissonanceWide": "Dissonance on 1–2"
     },
     "Roll": {
       "Margin": "Margin",
@@ -304,7 +317,7 @@
       "ClaimStamp": "Take a Stamp",
       "StampClaimed": "Stamp taken",
       "Error": "Margin of Error",
-      "ErrorText": "A twist. The GM introduces a complication.",
+      "ErrorText": "The GM gains Scrutiny, to spend on a twist when they choose.",
       "ScrutinyGained": "Scrutiny +1",
       "StampEarned": "Hindrance bites: +1 Stamp.",
       "DissonanceCount": "Dissonance ×{n}",
@@ -324,7 +337,13 @@
       "Help": "+1 Help",
       "NoticeOnTarget": "+1 Notice on the target",
       "TurnOrderNote": "Turn order roll: the Margin's Grace and Error don't count.",
-      "SuccessesOnly": "successes (turn order)"
+      "SuccessesOnly": "successes (turn order)",
+      "GraceStamp": "+1 Stamp.",
+      "ErrorBites": "Your flaw bites: the GM complicates the scene through your Hindrance.",
+      "HindranceInPlay": "Hindrance in play",
+      "HindranceStamp": "+1 Stamp, whatever the dice show.",
+      "BoundNoEffect": "Bound gear has no white die to turn violet: no effect.",
+      "GreaterBoundNote": "Greater Bound: Dissonance on 1–2."
     },
     "Tier": {
       "denied": "Denied",
@@ -347,7 +366,7 @@
       "TraitsHint": "Short phrases about the place. A roller can pick one of them for +1 die, and the GM can spend Scrutiny on one against a roll.",
       "AddTrait": "Add",
       "AmendButton": "Add Trait · spend a Stamp",
-      "AmendHint": "Spend a Stamp to add a new Trait to this scene (a steam pipe bursts, useful scrap turns up, a hatch was unlocked all along). Anyone who can plausibly use it may pick it for +1 die; the GM may add one small detail.",
+      "AmendHint": "Spend a Stamp to add a new Trait to this scene (a steam pipe bursts, useful scrap turns up, a hatch was unlocked all along). Amend the card you're on: your Section, if the Location has them. Anyone who can plausibly use it may pick it for +1 die; the GM may add one small detail.",
       "AmendTitle": "Amend the Scene: {card}",
       "AmendConfirm": "Amend (spend a Stamp)",
       "AmendSent": "Asking the GM to add “{name}”.",
@@ -428,7 +447,7 @@
     },
     "Encumbrance": {
       "Heading": "Hindrances",
-      "Hint": "Two troubles. If any is in play, the Margin of Error and any Dissonance widen to 1–2, and an Error earns a Stamp. They never add dice.",
+      "Hint": "Two troubles. If any is in play you earn a Stamp, whatever the dice show, and the Margin of Error widens to 1–2. They never add dice.",
       "personal": "Personal",
       "personalHint": "A flaw.",
       "personalPrompt": "a flaw (Can't Leave a Machine Unfixed)",
@@ -624,13 +643,17 @@
       "Name": "Brief",
       "Else": "Something else",
       "ElseHint": "Start from nothing.",
-      "Hint": "A Brief is a starting point, not a class. It fills in your Station and skills and offers Traits, Hindrances and a Gift as suggestions. Change any of it.",
+      "Hint": "A Brief is a starting point, not a class. It fills in your Station and skills and offers Traits, Hindrances and a Gift as suggestions. Change any of it, or take the whole Brief at once with Quick create.",
       "Shine": "You shine when",
       "FromBrief": "From the {name} Brief",
       "SkillsNote": "Filled in from the {name} Brief. Change any of it.",
       "StartedWith": "Started with the Station Brief:",
       "Suggests": "Your Brief suggests a Commendation",
-      "Take": "Take it"
+      "Take": "Take it",
+      "Quick": "Quick create: the whole {name} Brief",
+      "QuickTouched": "…and I'm Touched",
+      "QuickHint": "Fills in your Station, two Traits, two Hindrances and skills from the Brief (and its Gift and Drawback, if you're Touched), then reads it all back. Change anything afterwards.",
+      "QuickNote": "Built from the {name} Brief. Go Back to change any answer, or edit the sheet later."
     },
     "Docket": {
       "Heading": "Docket",
@@ -660,7 +683,8 @@
       },
       "Result": {
         "works": "It works, cleanly.",
-        "half": "It half works: something is saved, something is lost, or it works at a real cost.",
+        "cost": "It works, at a real cost.",
+        "half": "It half works: something saved, something lost.",
         "fails": "It fails. The story goes on from there."
       },
       "Count": "Count {n} to the Docket",
@@ -679,12 +703,22 @@
       "Heading": "Gear",
       "Add": "Add",
       "Delete": "Remove",
-      "Hint": "Gear is permission, not a bonus: the right tools let you roll at all, and it never adds dice. Bound gear (anything running on divine infrastructure) turns one white die violet. Exceptional gear is a Trait.",
+      "Hint": "Gear is permission, not a bonus: the right tools let you roll at all, and it never adds dice. Bound gear (anything running on divine infrastructure) turns one white die violet; with no white dice it does nothing. Exceptional gear is a Trait.",
       "NamePlaceholder": "Diagnostic scanner",
       "NotePlaceholder": "what it lets you do",
       "Bound": "Bound",
       "BoundHint": "Runs on divine infrastructure: in a roll it turns one white die violet.",
-      "None": "No gear recorded."
+      "None": "No gear recorded.",
+      "CreationNote": "New characters start without Bound gear: it is lent, issued or earned in play.",
+      "OnLoan": "on loan",
+      "OnLoanHint": "Bound gear is lent, issued or requisitioned. The GM can approve keeping it for good.",
+      "Kept": "kept",
+      "KeptHint": "This Bound gear is yours for good.",
+      "Keep": "Keep it ({cost} Tenure)",
+      "KeepHint": "Approve keeping this Bound gear for good. It costs the character Tenure (and, naturally, a registration form).",
+      "NeedTenure": "Keeping Bound gear costs {cost} unspent Tenure.",
+      "KeptLog": "Kept Bound gear for good: {name} ({cost} Tenure).",
+      "Unnamed": "unnamed gear"
     },
     "Proceedings": {
       "Heading": "Summary Proceedings",
@@ -723,20 +757,36 @@
       "act": {
         "commended": "They take a Major Notice.",
         "approved": "They take a Minor Notice.",
-        "conditions": "They take a Minor Notice, but you take one too, or lose position.",
-        "denied": "You take a Minor Notice, or they gain the upper hand."
+        "conditions": "You each take a Minor Notice.",
+        "denied": "You take a Minor Notice."
       },
       "resist": {
         "commended": "No harm, and you can turn it around.",
         "approved": "No harm.",
         "conditions": "You take a Minor Notice.",
-        "denied": "You take a Major Notice, and the GM tells their triumph in full."
+        "denied": "You take a Major Notice (Reclassify can make it a Minor), and the GM tells their triumph in full."
       },
       "record": {
         "none": "Chorus answers none of your questions.",
         "one": "Chorus answers one question: true, exact and literal.",
         "many": "Chorus answers {n} questions: true, exact and literal."
       }
+    },
+    "Place": {
+      "Heading": "Location and Sections",
+      "PartOf": "Part of",
+      "NoLocation": "Nothing: this is the whole Location",
+      "PartOfHint": "When the space matters, give each Section a card of its own, part of the card for the whole Location, and lay the Section cards on top of it. A token is on the smallest card under it; a roll there may use one Trait from the Section or from the Location.",
+      "Open": "Open that card",
+      "Links": "Links",
+      "LinksPlaceholder": "Base (Hazard) · Control",
+      "LinksHint": "Where you can go from here. Free unless marked Hazard (crossing takes a roll), Locked (it has to be opened first) or Long (getting there takes your turn).",
+      "Sections": "Sections",
+      "From": "From {name}"
+    },
+    "Migration": {
+      "Speaker": "Gloss",
+      "AttuneMoved": "A small notice about {name}'s record: the skills have changed. Attune is retired, and its rating has moved to Composure (now {rating}). There are also three new skills at 0: Aim, Systems and Navigate. Working with the Bound now uses the skill for what you do: Hullcraft for their machines, Lore for the rites, Persuade for one that talks, Composure to hold steady."
     }
   }
 }

@@ -1,6 +1,7 @@
 import { SYSTEM_ID, NPC_TIERS } from "../config.mjs";
 import { RATINGS } from "../rules.mjs";
 import { trackContext, takeNotice, clearNotice, treatNotice, clearMinors, withdraw } from "./notice-track.mjs";
+import { OTHER_TAGS } from "../npc-tags.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -38,11 +39,11 @@ export default class NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       label: i18n.localize(`CANTICA.NpcTier.${value}`),
       selected: system.tier === value
     }));
-    context.actionTags = [1, 2, 3].map(n => ({
-      value: n,
-      label: `${i18n.localize("CANTICA.Npc.Tag")} ${n}${system[`tag${n}`] ? `: ${system[`tag${n}`]}` : ""}`,
-      selected: system.actionTag === n
-    }));
+    // A Background NPC has the Role Tag only; a Minor one other Tag; a Major two.
+    const others = OTHER_TAGS[system.tier] ?? 2;
+    context.showOther1 = others >= 1 || Boolean(system.otherTag1);
+    context.showOther2 = others >= 2 || Boolean(system.otherTag2);
+    context.extraTag = (others < 1 && system.otherTag1) || (others < 2 && system.otherTag2);
     context.tierHint = i18n.localize(`CANTICA.NpcTier.${system.tier}Hint`);
     context.track = trackContext(this.actor);
     // Only a Major NPC has a full track to withdraw from.

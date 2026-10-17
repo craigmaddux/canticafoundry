@@ -114,3 +114,33 @@ test("a Stamp negates it: the original outcome returns and nothing more can be d
 test("a roll made outside any scene can't be complicated", () => {
   assert.equal(cardView({ ...baseState(), sceneId: "" }, t).canComplicate, false);
 });
+
+import { locationsOf, locationOptions, traitGroups } from "../module/scene.mjs";
+
+test("a Section card is part of its Location: rolls there may use either's Traits, nearest first", () => {
+  const cards = {
+    deck: { id: "deck", name: "Deck 22", system: { location: "", traits: [{ id: "t0", name: "Thin Air" }] } },
+    silo: { id: "silo", name: "Launch Silo 4", system: { location: "deck", traits: [{ id: "t1", name: "Automated Defenses Online" }] } },
+    walk: { id: "walk", name: "Catwalks", system: { location: "silo", traits: [{ id: "t2", name: "Clear Sightlines" }, { id: "t3", name: "" }] } },
+    bare: { id: "bare", name: "Control", system: { location: "silo", traits: [] } }
+  };
+  const lookup = id => cards[id];
+  assert.deepEqual(locationsOf(cards.walk, lookup).map(c => c.id), ["silo", "deck"]);
+  assert.deepEqual(traitGroups(cards.walk, lookup).map(g => [g.name, g.own, g.traits.map(t => t.id)]),
+    [["Catwalks", true, ["t2"]], ["Launch Silo 4", false, ["t1"]], ["Deck 22", false, ["t0"]]]);
+  assert.deepEqual(traitGroups(cards.bare, lookup).map(g => g.cardId), ["silo", "deck"]);
+});
+
+test("a card can't be part of itself, or of anything that is part of it", () => {
+  const cards = {
+    a: { id: "a", name: "A", system: { location: "b" } },
+    b: { id: "b", name: "B", system: { location: "a" } },
+    c: { id: "c", name: "C", system: { location: "" } }
+  };
+  const lookup = id => cards[id];
+  assert.deepEqual(locationsOf(cards.a, lookup).map(c => c.id), ["b"]);
+  const all = Object.values(cards);
+  assert.deepEqual(locationOptions(cards.c, all, lookup).map(c => c.id), ["a", "b"]);
+  const tree = { p: { id: "p", system: { location: "" } }, k: { id: "k", system: { location: "p" } } };
+  assert.deepEqual(locationOptions(tree.p, Object.values(tree), id => tree[id]).map(c => c.id), []);
+});

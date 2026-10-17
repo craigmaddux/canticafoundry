@@ -10,7 +10,7 @@ export const SCENARIO = {
   id: "hurting-on-deck-22",
   name: "Hurting on Deck 22",
 
-  /** Rating, Tier (background, minor, major) and up to three Tags. `action` is which Tag is the Action Tag (1-3). */
+  /** Rating, Tier (background, minor, major) and Tags. The first (or `action`, 1-3) is the Role Tag; the rest are the other Tags. */
   npcs: [
     {
       key: "tamsin-voy", name: "Tamsin Voy, Chief Engineer", match: "Tamsin Voy", rating: 2, tier: "minor",
@@ -40,7 +40,7 @@ export const SCENARIO = {
     },
     {
       key: "brother-caddo", name: "Brother Caddo, Liturgist", rating: 1, tier: "minor", tags: ["Compline Voice", "Sees Signs"],
-      notes: "Holding a vigil, convinced the Bound is grieving. Almost right. Can help with Attune, and is the choir the clause needs."
+      notes: "Holding a vigil, convinced the Bound is grieving. Almost right. Knows the calming rites, and is the choir the clause needs."
     },
     {
       key: "proctor-halvard", name: "Proctor Halvard", match: "Proctor Halvard", rating: 1, tier: "minor", tags: ["Knows Every Regulation", "Tired of Your Nonsense"],
@@ -82,7 +82,7 @@ export const SCENARIO = {
 <h3>Before you start</h3>
 <ul><li>Start the Hum at <strong>0</strong>, and Scrutiny at <strong>one per player</strong> (the Scrutiny window's Start session button).</li>
 <li>Suggested characters, from the Station Briefs: Engineering, the Hospice, the Proctor's Office, the Compline Walk and the Registry (the one who can make sense of the permit).</li>
-<li>Playtest focus: violet dice and Dissonance, the Hum climbing quietly, a Gift and Drawback if anyone is Touched, a social conflict with a Major NPC, a Docket against the jump.</li></ul>`
+<li>Playtest focus: violet dice and Dissonance, the Hum climbing quietly, Composure and a frightened Bound, a Gift and Drawback if anyone is Touched, a social conflict with a Major NPC, a Docket against the jump.</li></ul>`
     },
     {
       name: "Opening the session",
@@ -104,9 +104,9 @@ export const SCENARIO = {
       html: `<h3>1. The air goes thin</h3>
 <p>Bring each character in through their own door, and show the problem: headaches, a fainted neighbor, doors propped open for any breeze, a petition circulating. Announce the jump early. <em>Tests: basic rolls, the Margin. Summary Proceedings if the crowd needs calming.</em></p>
 <h3>2. Nothing is broken</h3>
-<p>At the recycler, Hullcraft comes back Approved: nothing is mechanically wrong. That's the turn. Someone has to try Attune, use a Gift, or find someone who listens to Bound. Old Hush is afraid, and its attention keeps drifting to the east wall. Every violet die here is a risk. <em>Tests: violet dice, Dissonance, the Hum, Gift and Drawback, Bound gear.</em></p>
+<p>At the recycler, Hullcraft comes back Approved: nothing is mechanically wrong. That's the turn. Someone has to use a Gift, try the old rites, or find someone who listens to Bound. Old Hush is afraid, and its attention keeps drifting to the east wall. Every violet die here is a risk. <em>Tests: violet dice, Dissonance, the Hum, Gift and Drawback, Bound gear.</em></p>
 <h3>3. The silent one</h3>
-<p>Behind the wall: Unit 7, its permit taped to the door, and Odette Brannagh, quietly proud of how well it works. She isn't a villain. The players can argue with her, dig into the paperwork, or find a rule that applies. <em>Tests: social conflict against a Rating 2 Major NPC, Standing Notices, Procedure, Requests for Record.</em></p>
+<p>Behind the wall: Unit 7, its permit taped to the door, and Odette Brannagh, quietly proud of how well it works. She isn't a villain. She believes the Bound are owed rest, and she may be right. The players can argue with her, dig into the paperwork, or find a rule that applies. <em>Tests: social conflict against a Rating 2 Major NPC, Standing Notices, Procedure, Requests for Record.</em></p>
 <h3>4. Before the jump</h3>
 <p>The finale is a <strong>Docket</strong>: deal with Unit 7, steady the recycler, and calm Old Hush before the jump. Everyone contributes their own way: a repair, a song, an argument, a form. Margins of Error move the Deadline closer. <em>Tests: the Docket, Scrutiny, Stamps under pressure.</em></p>
 <p><strong>Sizing:</strong> Standard is 4 boxes per player, 3 rounds. If the players dealt with Unit 7 cleanly in Beat 3, drop it to 3 per player. Open the Docket on a Scene Card (the Docket panel on its sheet is yours alone; the table sees only the running tally of successes on the card's token).</p>`

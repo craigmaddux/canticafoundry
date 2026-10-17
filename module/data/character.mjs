@@ -1,4 +1,4 @@
-import { SKILLS, SKILL_MAX, OPEN_TRAITS } from "../config.mjs";
+import { SKILLS, SKILL_MAX, OPEN_TRAITS, RETIRED_SKILLS } from "../config.mjs";
 import { RULE_BREAKS } from "../rules.mjs";
 import {
   gradeFor, ROMAN, marginTarget, stampsPerSession, commendationSlots, skillsCost, CREATION_BUDGET, TRAIT_BASE, TRAIT_MAX, TRAIT_RANK_MAX
@@ -28,7 +28,7 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
     return {
       skills: new SchemaField(skills),
 
-      // Station is required (your high concept). Three open Traits to start; more can be bought, up to six.
+      // Station is required (your high concept). Two open Traits to start (v0.14); more can be bought, up to six.
       traits: new SchemaField({ station: text(), ...openTraits }),
       // Each Trait has a rank, 1 or 2: it adds that many dice. Rank 2 costs 6 Tenure and needs Grade III.
       traitRanks: new SchemaField(Object.fromEntries(RANKED_TRAITS.map(key =>
@@ -73,7 +73,9 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
         id: new StringField({ required: true, blank: false }),
         name: text(),
         note: text(),
-        bound: new BooleanField({ initial: false })
+        bound: new BooleanField({ initial: false }),
+        // Bound gear is on loan until kept: 3 Tenure with the GM's approval.
+        kept: new BooleanField({ initial: false })
       })),
 
       // The log: Tenure earned, purchases, Compline answers, a highlight when a Grade is reached.
@@ -89,6 +91,10 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
 
       // One shared track: 2 Minor boxes, 2 Major boxes, 1 Final box.
       notices: noticeTrackField(),
+
+      // Set by a migration that moved a retired skill's rating (Attune to Composure): its owners are told once.
+
+      skillsMoved: new BooleanField({ initial: false }),
 
       notes: text()
     };
@@ -117,6 +123,19 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
 
     // v0.7: there is no skill rating 3. Any skill at 3 drops to 2 and refunds the 6 Tenure it cost,
     // to unspent only: Tenure earned, and so Grade, never changes.
+    // v0.12: Attune is retired. Its rating moves to Composure (holding steady against the Bound), unless
+    // Composure already has one.
+    if (source.skills && typeof source.skills === "object") {
+      for (const [old, next] of Object.entries(RETIRED_SKILLS)) {
+        if (!(old in source.skills)) continue;
+        if (source.skills[next] === undefined) {
+          source.skills[next] = source.skills[old];
+          // Tell the owners once (see migrations.mjs), and save the move so it isn't made again.
+          if (source.skills[old] > 0) source.skillsMoved = true;
+        }
+        delete source.skills[old];
+      }
+    }
     if (source.skills && typeof source.skills === "object") {
       let refund = 0;
       for (const [key, rating] of Object.entries(source.skills)) {

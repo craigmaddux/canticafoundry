@@ -26,6 +26,20 @@
         <li class="empty">{{localize "CANTICA.Card.NoTraits"}}</li>
         {{/each}}
       </ul>
+      {{#each locations}}
+      <h3 class="section-title">{{localize "CANTICA.Place.From" name=name}}</h3>
+      <ul class="trait-list">
+        {{#each traits}}
+        <li class="scene-trait">
+          <details>
+            <summary><span class="chip">◆</span><span class="tname">{{name}}</span></summary>
+            {{#if hasNote}}<p class="note">{{note}}</p>{{/if}}
+          </details>
+        </li>
+        {{/each}}
+      </ul>
+      {{/each}}
+      {{#if links}}<p class="note"><strong>{{localize "CANTICA.Place.Links"}}:</strong> {{links}}</p>{{/if}}
     </section>
 
     <div class="panel-actions">

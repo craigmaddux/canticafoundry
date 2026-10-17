@@ -16,21 +16,21 @@
       "persuade": 1,
       "procedure": 2,
       "survival": 0,
-      "attune": 1
+      "composure": 1
     },
     "traits": {
       "station": "Third-Shift Recycler Technician",
       "trait1": "Stem-Side Born, Stem-Side Stubborn",
-      "trait2": "Owes Deya Marsh More Than Tallies",
-      "trait3": "Reads Schematics Like Scripture"
+      "trait2": "Reads Schematics Like Scripture",
+      "trait3": ""
     },
     "traitRanks": {
       "station": 1,
       "trait1": 1,
-      "trait2": 1,
-      "trait3": 2
+      "trait2": 2,
+      "trait3": 1
     },
-    "traitSlots": 3,
+    "traitSlots": 2,
     "encumbrances": {
       "personal": "Can't Leave a Machine Unfixed",
       "circumstantial": "Censured Once, Watched Ever Since"

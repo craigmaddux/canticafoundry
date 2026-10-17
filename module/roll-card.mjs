@@ -91,6 +91,11 @@ export function cardView(state, t) {
     // Cards saved before v0.8 call it Resonance.
     dissonanceLabel: state.dissonanceLabel || state.resonanceLabel || "",
     stampNote: state.stampNote,
+    // Spec v0.15: a Hindrance in play earns a Stamp whatever the dice show; a Grace earns one; an Error with a
+    // Hindrance in play is the flaw biting. Cards from before keep their old wording (stampNote, the claim button).
+    hindranceStamp: Boolean(state.hindranceStamp),
+    graceStamp: state.graceStamp ?? null,
+    bites: Boolean(state.bites),
     complication: c
       ? {
         trait: c.trait,

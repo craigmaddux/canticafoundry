@@ -15,6 +15,13 @@ export default class CardData extends foundry.abstract.TypeDataModel {
       // The scene everyone falls back to when their token isn't standing on a card.
       active: new BooleanField({ initial: false }),
 
+      // Locations and Sections: the card for the place this one is part of (a Section's Location). Rolls here may use
+      // its Traits too.
+      location: new StringField({ required: true, blank: true, initial: "" }),
+      // Where you can go from here, and what's in the way: Base (Hazard) · Control. Free unless marked Hazard (a roll),
+      // Locked (open it first) or Long (takes your turn).
+      links: new StringField({ required: true, blank: true, initial: "" }),
+
       // A Docket in this scene: a job against a Deadline (see docket.mjs). Only the GM sees it; the table sees
       // only the running tally of successes, on the card's token and panel.
       docket: new SchemaField({

@@ -20,24 +20,23 @@
       <h2>{{localize "CANTICA.Npc.Tags"}}</h2>
       <p class="hint">{{localize "CANTICA.Npc.TagsHint"}}</p>
       <div class="trait">
-        <label for="npc-tag1">{{localize "CANTICA.Npc.Tag"}} 1</label>
-        <input id="npc-tag1" type="text" name="system.tag1" value="{{system.tag1}}" {{#unless editable}}disabled{{/unless}}>
+        <label for="npc-role">{{localize "CANTICA.Npc.RoleTag"}}</label>
+        <input id="npc-role" type="text" name="system.roleTag" value="{{system.roleTag}}" placeholder="{{localize 'CANTICA.Npc.RolePlaceholder'}}" {{#unless editable}}disabled{{/unless}}>
+        <p class="hint">{{localize "CANTICA.Npc.RoleTagHint"}}</p>
       </div>
+      {{#if showOther1}}
       <div class="trait">
-        <label for="npc-tag2">{{localize "CANTICA.Npc.Tag"}} 2</label>
-        <input id="npc-tag2" type="text" name="system.tag2" value="{{system.tag2}}" {{#unless editable}}disabled{{/unless}}>
+        <label for="npc-other1">{{localize "CANTICA.Npc.OtherTag"}}</label>
+        <input id="npc-other1" type="text" name="system.otherTag1" value="{{system.otherTag1}}" {{#unless editable}}disabled{{/unless}}>
       </div>
+      {{/if}}
+      {{#if showOther2}}
       <div class="trait">
-        <label for="npc-tag3">{{localize "CANTICA.Npc.Tag"}} 3 <small>({{localize "CANTICA.Npc.Major"}})</small></label>
-        <input id="npc-tag3" type="text" name="system.tag3" value="{{system.tag3}}" {{#unless editable}}disabled{{/unless}}>
+        <label for="npc-other2">{{localize "CANTICA.Npc.OtherTag"}} <small>({{localize "CANTICA.Npc.Major"}})</small></label>
+        <input id="npc-other2" type="text" name="system.otherTag2" value="{{system.otherTag2}}" {{#unless editable}}disabled{{/unless}}>
       </div>
-      <div class="trait">
-        <label for="npc-action">{{localize "CANTICA.Npc.ActionTag"}}</label>
-        <select id="npc-action" name="system.actionTag" {{#unless editable}}disabled{{/unless}}>
-          {{#each actionTags}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
-        </select>
-        <p class="hint">{{localize "CANTICA.Npc.ActionTagHint"}}</p>
-      </div>
+      {{/if}}
+      {{#if extraTag}}<p class="hint">{{localize "CANTICA.Npc.ExtraTag"}}</p>{{/if}}
       <div class="trait">
         <label for="npc-tier">{{localize "CANTICA.Npc.Tier"}}</label>
         <select id="npc-tier" name="system.tier" {{#unless editable}}disabled{{/unless}}>

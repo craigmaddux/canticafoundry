@@ -30,6 +30,34 @@
       {{/if}}
     </section>
 
+    {{#if showPlace}}
+    <section class="panel place-panel">
+      <h2>{{localize "CANTICA.Place.Heading"}}</h2>
+      {{#if isGM}}
+      <div class="form-row">
+        <label for="card-location-{{actor.id}}">{{localize "CANTICA.Place.PartOf"}}</label>
+        <select id="card-location-{{actor.id}}" name="system.location">
+          <option value="">{{localize "CANTICA.Place.NoLocation"}}</option>
+          {{#each locationChoices}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+        </select>
+        {{#if location}}<button type="button" data-action="openCard" data-id="{{location.id}}" title="{{localize 'CANTICA.Place.Open'}}"><i class="fa-solid fa-up-right-from-square"></i></button>{{/if}}
+      </div>
+      <p class="hint">{{localize "CANTICA.Place.PartOfHint"}}</p>
+      <div class="form-row">
+        <label for="card-links-{{actor.id}}">{{localize "CANTICA.Place.Links"}}</label>
+        <input id="card-links-{{actor.id}}" type="text" name="system.links" value="{{system.links}}" placeholder="{{localize 'CANTICA.Place.LinksPlaceholder'}}" title="{{localize 'CANTICA.Place.LinksHint'}}">
+      </div>
+      {{else}}
+      {{#if location}}<p class="note"><strong>{{localize "CANTICA.Place.PartOf"}}:</strong> <a data-action="openCard" data-id="{{location.id}}">{{locationPath}}</a></p>{{/if}}
+      {{#if system.links}}<p class="note"><strong>{{localize "CANTICA.Place.Links"}}:</strong> {{system.links}}</p>{{/if}}
+      {{/if}}
+      {{#if sectionCards.length}}
+      <p class="note"><strong>{{localize "CANTICA.Place.Sections"}}:</strong>
+        {{#each sectionCards}}<a class="section-link" data-action="openCard" data-id="{{id}}" title="{{links}}">{{name}}</a>{{/each}}</p>
+      {{/if}}
+    </section>
+    {{/if}}
+
     {{#if isGM}}
     <section class="panel docket-panel">
       <h2>

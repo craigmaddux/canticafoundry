@@ -33,6 +33,13 @@
       {{#if briefIntro}}
       <blockquote class="brief-greeting">{{briefIntro.greeting}}</blockquote>
       <p class="hint">{{briefIntro.blurb}} {{localize "CANTICA.Brief.Shine"}} {{briefIntro.shine}}.</p>
+      {{#if quickCreate}}
+      <div class="quick-create">
+        <button type="button" class="primary" data-action="quickCreate" data-touched="false">{{quickCreate.label}}</button>
+        {{#if quickCreate.hasGift}}<button type="button" data-action="quickCreate" data-touched="true">{{quickCreate.touchedLabel}}</button>{{/if}}
+        <p class="hint">{{localize "CANTICA.Brief.QuickHint"}}</p>
+      </div>
+      {{/if}}
       {{else}}
       <p class="hint">{{localize "CANTICA.Brief.Hint"}}</p>
       {{/if}}
@@ -112,6 +119,7 @@
 
     {{!-- Review --}}
     {{#if isReview}}
+    {{#if quickNote}}<p class="hint brief-note">{{quickNote}}</p>{{/if}}
     <dl class="reg-summary">
       <dt>{{localize "CANTICA.Register.Name"}}</dt><dd>{{summary.name}}</dd>
       {{#if summary.brief}}<dt>{{localize "CANTICA.Brief.Name"}}</dt><dd><span class="tag">{{summary.brief}}</span></dd>{{/if}}

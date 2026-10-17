@@ -48,19 +48,26 @@
   {{#if outcome.grace}}
   <div class="margin grace">
     <strong>{{localize "CANTICA.Roll.Grace"}}</strong>
-    <span>{{localize "CANTICA.Roll.GraceText"}}</span>
-    <button type="button" data-action="claim-stamp">{{localize "CANTICA.Roll.ClaimStamp"}}</button>
+    {{#if graceStamp}}<span class="stamp">{{localize "CANTICA.Roll.GraceStamp"}}</span>
+    {{else}}<span>{{localize "CANTICA.Roll.GraceText"}}</span>
+    <button type="button" data-action="claim-stamp">{{localize "CANTICA.Roll.ClaimStamp"}}</button>{{/if}}
   </div>
   {{/if}}
 
   {{#if outcome.error}}
   <div class="margin error">
     <strong>{{localize "CANTICA.Roll.Error"}}</strong>
-    <span>{{localize "CANTICA.Roll.ErrorText"}}</span>
+    <span>{{#if bites}}{{localize "CANTICA.Roll.ErrorBites"}}{{else}}{{localize "CANTICA.Roll.ErrorText"}}{{/if}}</span>
     <span class="scrutiny">{{localize "CANTICA.Roll.ScrutinyGained"}}</span>
-    {{#if stampNote}}<span class="stamp">{{localize "CANTICA.Roll.StampEarned"}}</span>{{/if}}
   </div>
   {{/if}}
+
+  {{#if hindranceStamp}}
+  <div class="margin hindrance">
+    <strong>{{localize "CANTICA.Roll.HindranceInPlay"}}</strong>
+    <span class="stamp">{{localize "CANTICA.Roll.HindranceStamp"}}</span>
+  </div>
+  {{else}}{{#if stampNote}}<p class="note">{{localize "CANTICA.Roll.StampEarned"}}</p>{{/if}}{{/if}}
 
   {{#if dissonanceLabel}}
   <div class="margin dissonance">

@@ -1,6 +1,6 @@
 import { SYSTEM_ID, SKILL_GROUPS } from "../config.mjs";
 import { buildPool, DIFFICULTIES, commendationEffects, traitDice } from "../rules.mjs";
-import { sceneTraitDice } from "../scene.mjs";
+import { sceneTraitDice, traitGroups } from "../scene.mjs";
 import { sceneChoices } from "../cards.mjs";
 import { rollPool } from "../dice/roll.mjs";
 import { ROLL_MODES } from "../consequence.mjs";
@@ -107,12 +107,17 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
         id: card.id,
         name: card.name,
         selected: card.id === scene.selectedId,
-        traits: card.system.traits.filter(trait => trait.name).map(trait => ({
-          value: `${card.id}:${trait.id}`,
-          id: trait.id,
-          cardId: card.id,
-          name: trait.name,
-          note: trait.note
+        // The card's own Traits, then those of the Location it is part of (a Section's card): still one per roll.
+        groups: traitGroups(card, id => game.actors.get(id)).map(group => ({
+          label: group.own ? "" : group.name,
+          traits: group.traits.map(trait => ({
+            value: `${group.cardId}:${trait.id}`,
+            id: trait.id,
+            cardId: card.id,
+            name: trait.name,
+            short: trait.name,
+            note: trait.note
+          }))
         }))
       })),
 
@@ -220,6 +225,7 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
       sceneTrait,
       difficulty: Number(chosen.dataset.difficulty),
       targetName: chosen.dataset.name ?? "",
+      greaterBound: Boolean(form.elements.greaterBound?.checked),
       obstacles: Math.max(0, Math.trunc(Number(form.querySelector('input[name="obstacles"]:checked')?.value) || 0))
     };
   }
@@ -250,15 +256,16 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
     el.querySelector("[data-note]").textContent =
       pool.capped ? i18n.localize("CANTICA.Roll.Capped")
         : pool.floored ? i18n.localize("CANTICA.Roll.Floored")
-          : input.gift ? i18n.localize(`CANTICA.Roll.GiftEffect.${pool.giftEffect || "none"}`) : "";
+          : pool.boundEffect === "none" ? i18n.localize("CANTICA.Roll.BoundNoEffect")
+            : input.gift ? i18n.localize(`CANTICA.Roll.GiftEffect.${pool.giftEffect || "none"}`) : "";
 
-    // Any Hindrance (or the Drawback) in play is Greater Bound: the Margin of Error widens to 1-2,
-    // and so does Dissonance on any violet dice.
+    // A Hindrance (or the Drawback) in play: a Stamp whatever the dice show, and the Margin of Error widens to 1-2.
+    // It never touches violet dice; Greater Bound (the GM's call) widens Dissonance.
     const widened = input.encumbranceKeys.length > 0;
-    const range = widened ? "1–2" : "1";
-    el.querySelector("[data-error-range]").textContent = pool.violet > 0
-      ? i18n.format("CANTICA.Pool.ErrorAndDissonanceRange", { range })
-      : i18n.format("CANTICA.Pool.ErrorRange", { range });
+    const parts = [i18n.format("CANTICA.Pool.ErrorRange", { range: widened ? "1–2" : "1" })];
+    if (widened) parts.push(i18n.localize("CANTICA.Pool.HindranceStamp"));
+    if (pool.violet > 0 && input.greaterBound) parts.push(i18n.localize("CANTICA.Pool.DissonanceWide"));
+    el.querySelector("[data-error-range]").textContent = parts.join(" · ");
   }
 
   static async #onSubmit(event, form, formData) {

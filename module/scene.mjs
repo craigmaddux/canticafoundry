@@ -7,6 +7,11 @@
  *   2. The GM may spend Scrutiny on one after a roll: one success fewer, which the player can
  *      negate by spending a Stamp.
  * A character is "in" a card when their token sits on it.
+ *
+ * Locations and Sections: when the space matters, each Section is a card of its own, "part of" the card for the whole
+ * Location (and that may be part of a bigger one: zoom in as far as you need). Put the Section cards on top of the
+ * Location's; a token is on the smallest card under it. A roll there may use one scene Trait from the Section or
+ * from any place it is part of.
  */
 
 /** A scene Trait picked in the roll dialog adds this many dice. Only one may be picked. */
@@ -35,6 +40,45 @@ export function pickCard(point, cards) {
 /** A new scene Trait: a phrase, and an optional note on how it plays. */
 export function newTrait({ id, name = "", note = "" } = {}) {
   return { id, name: String(name).trim(), note: String(note).trim() };
+}
+
+/**
+ * The places a card is part of, nearest first: its Location, that Location's, and so on. Stops at a missing card or a
+ * loop (a card can't be part of itself, however the links are set).
+ * @param {{id: string, system: {location?: string}}} card
+ * @param {(id: string) => object|null|undefined} lookup  Finds a card by id.
+ * @returns {object[]}
+ */
+export function locationsOf(card, lookup) {
+  const chain = [];
+  const seen = new Set([card?.id]);
+  let next = card?.system?.location;
+  while (next && !seen.has(next)) {
+    const parent = lookup(next);
+    if (!parent) break;
+    chain.push(parent);
+    seen.add(parent.id);
+    next = parent.system?.location;
+  }
+  return chain;
+}
+
+/**
+ * Cards that may be chosen as the place a card is part of: any other card, except one that is (however far down)
+ * part of this card, which would make a loop.
+ */
+export function locationOptions(card, cards, lookup) {
+  return cards.filter(other => other.id !== card.id && !locationsOf(other, lookup).some(c => c.id === card.id));
+}
+
+/**
+ * The scene Traits a roll on a card may use: the card's own, then each place it is part of, nearest first.
+ * @returns {{cardId: string, name: string, own: boolean, traits: object[]}[]}  Groups with at least one named Trait.
+ */
+export function traitGroups(card, lookup) {
+  return [card, ...locationsOf(card, lookup)]
+    .map((c, i) => ({ cardId: c.id, name: c.name, own: i === 0, traits: (c.system?.traits ?? []).filter(t => t?.name) }))
+    .filter(group => group.traits.length);
 }
 
 /** Dice a chosen scene Trait contributes (none if nothing is chosen). */

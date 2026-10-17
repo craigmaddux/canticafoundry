@@ -18,7 +18,8 @@ const FALLBACK_CARD_ART = `systems/${SYSTEM_ID}/assets/emblem.svg`;
  * untagged Minor NPC (Rating 1): Rating, Tags and Tier are the GM's call.
  */
 const SPEC_STATS = {
-  "sister-aiwen": { rating: 2, tag1: "Compline Voice", tag2: "Sees Through Flattery", tier: "major" }
+  "sister-aiwen": { rating: 2, tier: "major", roleTag: "Liturgist Cantor", otherTag1: "Compline Voice", otherTag2: "Sees Through Flattery" },
+  "orin-fell": { rating: 2, tier: "major", roleTag: "Magistrate of the Forum", otherTag1: "Cited Opinions", otherTag2: "Has Heard It All" },
 };
 
 const byId = {};

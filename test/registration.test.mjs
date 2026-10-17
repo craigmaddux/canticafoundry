@@ -20,12 +20,17 @@ test("every field a step fills in exists on the sheet", () => {
   for (const step of STEPS) for (const field of fieldsOf(step)) assert.ok(FIELDS.includes(field), `${step.id}: ${field}`);
 });
 
-test("everything Gloss asks for is covered: role, three Traits, two Hindrances, skills, the Touched questions", () => {
+test("everything Gloss asks for is covered: role, two open Traits, two Hindrances, the Touched questions, skills", () => {
   const covered = new Set(STEPS.flatMap(fieldsOf));
   for (const field of FIELDS) assert.ok(covered.has(field), `no step fills in ${field}`);
   assert.ok(STEPS.some(s => s.kind === "skills"));
-  assert.equal(STEPS.filter(s => s.field?.startsWith("system.traits.trait")).length, 3);
+  assert.equal(STEPS.filter(s => s.field?.startsWith("system.traits.trait")).length, 2);
   assert.equal(STEPS.filter(s => s.field?.startsWith("system.encumbrances.")).length, 2);
+});
+
+test("spec v0.14 order: who you are first, skills last (just before the read-back)", () => {
+  const ids = STEPS.map(s => s.id);
+  assert.deepEqual(ids, ["welcome", "role", "interest", "quality", "hindrance-personal", "hindrance-circumstantial", "touched", "skills", "review"]);
 });
 
 test("text steps offer a handful of examples, each a short phrase", () => {

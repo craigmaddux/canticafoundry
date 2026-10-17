@@ -1,5 +1,6 @@
 import { SYSTEM_ID } from "./config.mjs";
 import { SCENARIO as HURTING_ON_DECK_22 } from "./scenarios/hurting-on-deck-22.mjs";
+import { splitTags } from "./npc-tags.mjs";
 
 /**
  * Scenarios: a one-shot's people, places and notes, imported in one click (GM only). The people arrive hidden from
@@ -53,12 +54,13 @@ export async function importScenario(id = HURTING_ON_DECK_22.id) {
   for (const npc of scenario.npcs) {
     const key = `${id}:${npc.key}`;
     if (made.has(key)) continue;
-    const stat = { rating: npc.rating, tier: npc.tier, actionTag: npc.action ?? 1, tag1: npc.tags[0] ?? "", tag2: npc.tags[1] ?? "", tag3: npc.tags[2] ?? "" };
+    // The scenario's ▸ Tag (its first, unless `action` says otherwise) is the Role Tag; the rest are the other Tags.
+    const stat = { rating: npc.rating, tier: npc.tier, ...splitTags(npc.tags, npc.action ?? 1) };
 
     // Someone with this name is already here (the lore import makes Tamsin Voy and Proctor Halvard).
     const existing = npc.match ? game.actors.find(a => a.type === "npc" && a.name === npc.match) : null;
     if (existing) {
-      if (!existing.system.tag1 && !existing.system.tag2) { await existing.update({ system: stat }); filled++; }
+      if (!existing.system.roleTag && !existing.system.otherTag1) { await existing.update({ system: stat }); filled++; }
       await existing.setFlag(SYSTEM_ID, "scenarioKey", key);
       continue;
     }

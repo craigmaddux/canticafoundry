@@ -1,6 +1,6 @@
 import { SYSTEM_ID, SKILL_GROUPS, SKILL_MAX, OPEN_TRAITS } from "../config.mjs";
 import { RULE_BREAKS } from "../rules.mjs";
-import { CREATION_BUDGET, CREATION_MAX, TRAIT_MAX, TRAIT_COST, TRAIT_RANK_COST, TRAIT_RANK_GRADE } from "../progression.mjs";
+import { CREATION_BUDGET, CREATION_MAX, TRAIT_MAX, TRAIT_COST, TRAIT_RANK_COST, TRAIT_RANK_GRADE, GEAR_KEEP_COST } from "../progression.mjs";
 import PoolDialog from "./pool-dialog.mjs";
 import { rollTurnOrder } from "../dice/roll.mjs";
 import { findBrief, commendationSuggestion } from "../briefs.mjs";
@@ -12,7 +12,7 @@ const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
 
 /** Prompts shown as placeholders (not labels) in the open Trait slots. */
-const TRAIT_PROMPTS = ["where you come from", "who you owe or love", "what you believe"];
+const TRAIT_PROMPTS = ["a hobby or interest", "your best quality, as others see it", "where you come from", "who you owe or love", "what you believe"];
 
 export default class CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   /** The tab being shown, kept across re-renders. */
@@ -35,13 +35,13 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       setTraitRank: CharacterSheet.#onSetTraitRank,
       adjustStamps: CharacterSheet.#onAdjustStamps,
       startSession: CharacterSheet.#onStartSession,
-      citeClause: CharacterSheet.#onCiteClause,
       turnOrder: CharacterSheet.#onTurnOrder,
       countersign: CharacterSheet.#onCountersign,
       addCommendation: CharacterSheet.#onAddCommendation,
       takeBriefCommendation: CharacterSheet.#onTakeBriefCommendation,
       addGear: CharacterSheet.#onAddGear,
       deleteGear: CharacterSheet.#onDeleteGear,
+      keepGear: CharacterSheet.#onKeepGear,
       deleteCommendation: CharacterSheet.#onDeleteCommendation,
       awardTenure: CharacterSheet.#onAwardTenure,
       compline: CharacterSheet.#onCompline,
@@ -112,7 +112,7 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       over: system.creationRemaining < 0
     };
 
-    // Station and the open Traits (three to start; up to six), each with a rank (two pips: rank 2 is bought).
+    // Station and the open Traits (two to start; up to six), each with a rank (two pips: rank 2 is bought).
     const gm = isGM && this.isEditable;
     const traitRow = (key, prompt, isStation) => {
       const rank = this.actor.traitRank(key);
@@ -129,7 +129,7 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
     };
     context.traitRows = [
       traitRow("station", i18n.localize("CANTICA.Trait.stationPrompt"), true),
-      ...OPEN_TRAITS.slice(0, system.traitSlots).map((key, i) => traitRow(key, TRAIT_PROMPTS[i] ?? "a knack nobody expects", false))
+      ...OPEN_TRAITS.slice(0, system.traitSlots).map((key, i) => traitRow(key, TRAIT_PROMPTS[i] ?? "anything at all", false))
     ];
     context.rankHint = i18n.format("CANTICA.Traits.Rank.Hint", { cost: TRAIT_RANK_COST, grade: TRAIT_RANK_GRADE });
     context.canBuyTrait = !system.creation && system.traitSlots < TRAIT_MAX;
@@ -158,7 +158,17 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
 
     context.track = trackContext(this.actor);
     context.canWithdraw = true;
-    context.gear = system.gear.map((item, index) => ({ ...item, index }));
+    // No Bound gear at creation (the GM may still mark it). In play, Bound gear is on loan until the GM approves
+    // keeping it, for 3 Tenure.
+    const boundLocked = system.creation && !isGM;
+    context.gear = system.gear.map((item, index) => ({
+      ...item, index,
+      boundLocked: boundLocked && !item.bound,
+      canKeep: item.bound && !item.kept && isGM && this.isEditable,
+      onLoan: item.bound && !item.kept
+    }));
+    context.gearCreationNote = system.creation;
+    context.keepCost = GEAR_KEEP_COST;
 
     // History, newest first. A Grade-up is highlighted.
     context.history = [...system.history].sort((a, b) => b.at - a.at).map(entry => ({
@@ -331,37 +341,6 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
     if (id) await this.actor.giveStamp(game.actors.get(id));
   }
 
-  /** Spend a Stamp to declare that a rule in the Checklist exists and applies here. */
-  static async #onCiteClause() {
-    const i18n = game.i18n;
-    if (this.actor.system.stamps < 1) {
-      ui.notifications.warn(i18n.localize("CANTICA.Stamps.None"));
-      return;
-    }
-
-    const clause = await DialogV2.prompt({
-      window: { title: i18n.localize("CANTICA.Stamps.CiteTitle") },
-      content: `<div class="form-group stacked"><label>${i18n.localize("CANTICA.Stamps.CitePrompt")}</label>
-        <input type="text" name="clause" autofocus></div>`,
-      ok: {
-        label: i18n.localize("CANTICA.Stamps.Cite"),
-        callback: (event, button) => button.form.elements.clause.value.trim()
-      },
-      rejectClose: false
-    });
-    if (!clause) return;
-
-    await this.actor.adjustStamps(-1);
-    const ChatMessage = CONFIG.ChatMessage.documentClass;
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: await foundry.applications.handlebars.renderTemplate(
-        `systems/${SYSTEM_ID}/templates/chat/clause.hbs`,
-        { actorName: this.actor.name, clause }
-      )
-    });
-  }
-
   static async #onAddCommendation() {
     const system = this.actor.system;
     if (system.commendations.length >= system.commendationSlots) return;
@@ -379,8 +358,13 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
   }
 
   static async #onAddGear() {
-    const entry = { id: foundry.utils.randomID(), name: "", note: "", bound: false };
+    const entry = { id: foundry.utils.randomID(), name: "", note: "", bound: false, kept: false };
     await this.actor.update({ "system.gear": [...this.actor.toObject().system.gear, entry] });
+  }
+
+  /** The GM approves keeping a piece of Bound gear for good: it costs the character 3 Tenure. */
+  static async #onKeepGear(event, target) {
+    await this.actor.keepGear(target.dataset.id);
   }
 
   static async #onDeleteGear(event, target) {

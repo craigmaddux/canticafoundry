@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildPool, evaluateRoll, tierFor, commendationEffects, effectiveDifficulty, traitDice, withoutMarginEffects } from "../module/rules.mjs";
+import { buildPool, evaluateRoll, tierFor, DIFFICULTIES, commendationEffects, effectiveDifficulty, traitDice, withoutMarginEffects } from "../module/rules.mjs";
 import { marginTarget } from "../module/progression.mjs";
 
 test("Margin alone: Skill 0 still rolls one die", () => {
@@ -75,7 +75,10 @@ test("a turn-order roll ignores the Margin's Grace and Error but keeps its succe
   const grace = withoutMarginEffects(evaluateRoll({ margin: 10, white: [8] }, { difficulty: 1 }));
   assert.deepEqual([grace.grace, grace.successes], [false, 2]);
   const error = withoutMarginEffects(evaluateRoll({ margin: 1, white: [8] }, { difficulty: 1, encumbrance: true }));
-  assert.deepEqual([error.error, error.scrutiny, error.stampEarned], [false, 0, false]);
+  assert.deepEqual([error.error, error.scrutiny, error.bites], [false, 0, false]);
+  // The Hindrance's Stamp is not the Margin's: it stands.
+  assert.equal(error.stamps, 1);
+  assert.equal(grace.stamps, 0);
   assert.equal(error.successes, 1);
   assert.equal(evaluateRoll({ margin: 1, white: [8] }).error, true);
 });
@@ -157,18 +160,35 @@ test("Margin of Error: 1 normally, 1-2 with Encumbrance in play", () => {
   assert.equal(evaluateRoll({ margin: 3 }, { encumbrance: true }).error, false);
 });
 
-test("every Margin of Error gives the GM Scrutiny; only Encumbrance earns a Stamp", () => {
+test("every Margin of Error gives the GM Scrutiny; a Hindrance in play earns a Stamp whatever the dice show", () => {
   const plain = evaluateRoll({ margin: 1 });
-  assert.equal(plain.scrutiny, 1);
-  assert.equal(plain.stampEarned, false);
+  assert.deepEqual([plain.scrutiny, plain.stamps, plain.bites], [1, 0, false]);
 
   const burdened = evaluateRoll({ margin: 2 }, { encumbrance: true });
-  assert.equal(burdened.scrutiny, 1);
-  assert.equal(burdened.stampEarned, true);
+  assert.deepEqual([burdened.scrutiny, burdened.stamps, burdened.bites], [1, 1, true]);
 
   const fine = evaluateRoll({ margin: 5 }, { encumbrance: true });
-  assert.equal(fine.scrutiny, 0);
-  assert.equal(fine.stampEarned, false);
+  assert.deepEqual([fine.scrutiny, fine.stamps, fine.bites], [0, 1, false]);
+
+  const clean = evaluateRoll({ margin: 2 });
+  assert.deepEqual([clean.error, clean.stamps], [false, 0]);
+});
+
+test("a Margin of Grace earns a Stamp outright, and stacks with a Hindrance's", () => {
+  assert.deepEqual([evaluateRoll({ margin: 10 }).stamps, evaluateRoll({ margin: 10 }).graceStamp], [1, true]);
+  assert.equal(evaluateRoll({ margin: 10 }, { encumbrance: true }).stamps, 2);
+});
+
+test("a Hindrance never widens Dissonance; only Greater Bound does", () => {
+  assert.equal(evaluateRoll({ margin: 5, violet: [2] }, { encumbrance: true }).dissonance, 0);
+  assert.equal(evaluateRoll({ margin: 5, violet: [2] }, { greaterBound: true }).dissonance, 1);
+});
+
+test("D4 Unprecedented is on the ladder; Bound gear with no white dice does nothing", () => {
+  assert.equal(DIFFICULTIES[4], "unprecedented");
+  assert.equal(buildPool({ skill: 0, bound: 1 }).boundEffect, "none");
+  assert.equal(buildPool({ skill: 0, bound: 1 }).violet, 0);
+  assert.equal(buildPool({ skill: 1, bound: 1 }).boundEffect, "convert");
 });
 
 test("Dissonance: violet 1s, or 1-2 with Greater Bound", () => {

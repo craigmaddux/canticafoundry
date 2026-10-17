@@ -1,6 +1,6 @@
 import { SYSTEM_ID, SKILLS, OPEN_TRAITS, CARD_TOKEN } from "../config.mjs";
 import { escapeHtml } from "../lore-text.mjs";
-import { skillChange, traitSlotPurchase, traitRankUp, awardTenure, stampsPerSession, TRAIT_COST, TRAIT_MAX } from "../progression.mjs";
+import { skillChange, traitSlotPurchase, traitRankUp, awardTenure, stampsPerSession, TRAIT_COST, TRAIT_MAX, GEAR_KEEP_COST } from "../progression.mjs";
 
 export default class CanticaActor extends foundry.documents.Actor {
   /** Scene Cards are drawn onto the tabletop: a big, neutral, linked token that everyone can see. */
@@ -261,6 +261,27 @@ export default class CanticaActor extends foundry.documents.Actor {
   }
 
   /** Close character creation: from here, skills are bought with Tenure. */
+  /**
+   * Keep a piece of Bound gear for good (the GM's approval, 3 Tenure, and naturally a registration form).
+   * @param {string} id  The gear entry's id.
+   */
+  async keepGear(id) {
+    const i18n = game.i18n;
+    const gear = this.toObject().system.gear;
+    const item = gear.find(g => g.id === id);
+    if (!item?.bound || item.kept) return;
+    const { tenureUnspent } = this.system;
+    if (tenureUnspent < GEAR_KEEP_COST) {
+      ui.notifications.warn(i18n.format("CANTICA.Gear.NeedTenure", { cost: GEAR_KEEP_COST }));
+      return;
+    }
+    await this.update({
+      "system.gear": gear.map(g => (g.id === id ? { ...g, kept: true } : g)),
+      "system.tenureUnspent": tenureUnspent - GEAR_KEEP_COST
+    });
+    await this.logNote?.(i18n.format("CANTICA.Gear.KeptLog", { name: item.name || i18n.localize("CANTICA.Gear.Unnamed"), cost: GEAR_KEEP_COST }));
+  }
+
   async finishCreation() {
     await this.update({ "system.creation": false });
   }

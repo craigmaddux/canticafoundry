@@ -31,6 +31,32 @@ export function suggestionsFor(kind, brief) {
   return [];
 }
 
+/**
+ * Quick create: everything a Brief offers, as one update to a character in creation. Station is the Brief's name,
+ * the two open Traits its first two sample Traits, its two Hindrances, and its skills. Touched is optional: with
+ * touched, its Gift and Drawback too (unregistered, which is a fine Hindrance of its own); without, no Gift.
+ * @param {object} brief
+ * @param {{touched?: boolean}} [opts]
+ * @returns {object}  An update object (dot paths).
+ */
+export function quickCreate(brief, { touched = false } = {}) {
+  if (!brief) return {};
+  const [trait1 = "", trait2 = ""] = brief.traits ?? [];
+  const [personal = "", circumstantial = ""] = brief.hindrances ?? [];
+  const update = {
+    "system.brief": brief.id,
+    "system.traits.station": brief.name,
+    "system.traits.trait1": trait1,
+    "system.traits.trait2": trait2,
+    "system.encumbrances.personal": personal,
+    "system.encumbrances.circumstantial": circumstantial,
+    "system.skills": briefSkills(brief),
+    "system.touched": Boolean(touched && brief.gift)
+  };
+  if (touched && brief.gift) Object.assign(update, { "system.gift": brief.gift, "system.drawback": brief.drawback ?? "" });
+  return update;
+}
+
 /** The Brief's Gift and Drawback, as the first suggestion at the Touched step. */
 export const giftFor = brief => (brief?.gift ? { gift: brief.gift, drawback: brief.drawback } : null);
 

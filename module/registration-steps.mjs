@@ -69,8 +69,8 @@ export const STEPS = [
     kind: "text",
     suggests: "traits",
     title: "A Trait",
-    gloss: "Lovely. And how would the people around you describe your best personality trait?",
-    explain: "Another Trait. It does not have to be modest.",
+    gloss: "Lovely. And how would the people around you describe your best quality?",
+    explain: "Your second open Trait. It does not have to be modest. You can earn more later.",
     field: "system.traits.trait2",
     placeholder: "What others would say about you",
     examples: [
@@ -83,37 +83,12 @@ export const STEPS = [
     ]
   },
   {
-    id: "knack",
-    kind: "text",
-    suggests: "traits",
-    title: "A Trait",
-    gloss: "Wonderful. One more, and then we shall talk about what you are good at. Is there something you are known for, or a knack nobody would expect of you?",
-    explain: "Your third Trait. You can earn more later.",
-    field: "system.traits.trait3",
-    placeholder: "A knack or a reputation",
-    examples: [
-      "Can Find Anything in the Sump",
-      "Fixes Things by Talking to Them",
-      "Remembers Every Route",
-      "Wins Every Argument by Waiting",
-      "Knows Someone on Every Deck",
-      "Calms Frightened Machines"
-    ]
-  },
-  {
-    id: "skills",
-    kind: "skills",
-    title: "What you are good at",
-    gloss: "Now, what are you good at? You have fifteen Tenure to spend on skills, and no skill goes above two. Most residents choose three skills at two and three at one, which uses all fifteen, but it is entirely up to you.",
-    explain: "Skills are the 'what' of a roll: they add dice equal to their rating. A skill at 1 costs 1 Tenure, and a skill at 2 costs 4 in all (1, then 3 more). Click a skill's dots to set it."
-  },
-  {
     id: "hindrance-personal",
     kind: "text",
     suggests: "personal",
     title: "A Hindrance",
-    gloss: "Thank you. Now, everyone has something that gets in their own way. How would the people around you describe the habit you can least help?",
-    explain: "This is a Hindrance. It never adds dice. When one is in play, the Margin of Error widens, so things go sideways more often, and each time they do you earn a Stamp. It is how your troubles pay you back.",
+    gloss: "Thank you. Now, everyone has something that gets in their own way. What is the habit you can least help?",
+    explain: "This is a Hindrance. It never adds dice. Whenever one is in play on a roll you earn a Stamp, whatever the dice show, but the Margin of Error widens to 1–2, so things go sideways more often. It is how your troubles pay you back.",
     field: "system.encumbrances.personal",
     placeholder: "A habit you cannot quite help",
     examples: [
@@ -167,6 +142,13 @@ export const STEPS = [
     ]
   },
   {
+    id: "skills",
+    kind: "skills",
+    title: "What you are good at",
+    gloss: "And last of all, now that I know who you are: what are you good at? You have fifteen Tenure to spend on skills, and no skill goes above two. Most residents choose three skills at two and three at one, which uses all fifteen, but it is entirely up to you.",
+    explain: "Skills are the 'what' of a roll: they add dice equal to their rating. A skill at 1 costs 1 Tenure, and a skill at 2 costs 4 in all (1, then 3 more). Click a skill's dots to set it."
+  },
+  {
     id: "review",
     kind: "review",
     title: "All done",
@@ -178,7 +160,7 @@ export const STEPS = [
 /** Every sheet field a step may fill in. A test checks the steps against this list. */
 export const FIELDS = [
   "name",
-  "system.traits.station", "system.traits.trait1", "system.traits.trait2", "system.traits.trait3",
+  "system.traits.station", "system.traits.trait1", "system.traits.trait2",
   "system.encumbrances.personal", "system.encumbrances.circumstantial",
   "system.touched", "system.gift", "system.drawback", "system.registered"
 ];

@@ -2,7 +2,8 @@
  * Cantica dice rules (spec v0.8). Pure functions with no Foundry dependency, so
  * the same logic is unit-tested in Node (see test/rules.test.mjs).
  *
- * Pool = Margin (1 amber) + Skill + one Trait (its rank, or 1 if stretched) + Circumstances - Obstacles, cap 7.
+ * Pool = Margin (1 amber) + Skill + one Trait (its rank, or 1 if stretched) + bonus dice (a scene Trait, Help, a Notice on
+ * the target; "circumstances" here) - Obstacles, cap 7. Spec v0.13 dropped Circumstances as a rule of their own.
  * White dice succeed on 7+; violet (Bound) dice on 6+; the Margin on a threshold that
  * improves with Grade (7+ at Grades I-III, down to 4+ at Grade X).
  * Difficulty = successes needed to succeed at all.
@@ -28,12 +29,13 @@ export function traitDice({ rank = 1, stretch = false } = {}) {
   return Math.min(TRAIT_RANK_MAX, Math.max(1, Math.trunc(Number(rank) || 1)));
 }
 
-/** Difficulty ladder offered in the roll dialog. D4 is a story event and is never rolled as a ladder step. */
+/** The Difficulty ladder. D4 Unprecedented is for the wildly improbable (spec v0.15): a roll like any other. */
 export const DIFFICULTIES = {
   0: "easy",
   1: "standard",
   2: "hard",
-  3: "heroic"
+  3: "heroic",
+  4: "unprecedented"
 };
 
 /** NPC Ratings: used directly as the Difficulty of any roll against or to resist them. */
@@ -64,6 +66,8 @@ export function buildPool({ skill = 0, traits = 0, gift = false, circumstances =
   // The Margin is always amber; colored dice replace white dice, never add to the count.
   let colorable = total - 1;
   let violet = Math.min(colorable, Math.min(BOUND_GEAR_MAX, clean(bound)));
+  // Bound gear turns a white die violet; with no white dice (only the Margin) it gives no benefit.
+  const boundEffect = clean(bound) ? (violet > 0 ? "convert" : "none") : "";
 
   // The Gift: nothing extra, unless the pool is only the Margin (one violet die), or there is a white die to turn violet.
   let giftEffect = "";
@@ -78,7 +82,7 @@ export function buildPool({ skill = 0, traits = 0, gift = false, circumstances =
   }
   const white = colorable - violet;
 
-  return { raw, total, margin: 1, white, violet, giftEffect, capped: raw > POOL_CAP, floored: raw < 1 };
+  return { raw, total, margin: 1, white, violet, giftEffect, boundEffect, capped: raw > POOL_CAP, floored: raw < 1 };
 }
 
 /**
@@ -101,8 +105,9 @@ export function tierFor(successes, difficulty) {
  * @param {number[]} dice.violet Violet die results.
  * @param {object} opts
  * @param {number} opts.difficulty        Successes needed (already adjusted for any Commendation).
- * @param {boolean} [opts.encumbrance]    Any Encumbrance (or a Drawback) in play: Margin of Error widens to 1-2.
- * @param {boolean} [opts.greaterBound]   Greater Bound (or the Hum at the Refrain): Dissonance on 1-2.
+ * @param {boolean} [opts.encumbrance]    Any Hindrance (or a Drawback) in play: a Stamp whatever the dice show, and the
+ *                                        Margin of Error widens to 1-2. It never touches violet dice.
+ * @param {boolean} [opts.greaterBound]   Greater Bound (a GM tier), or the Hum at the Refrain: Dissonance on 1-2.
  * @param {number} [opts.marginTarget=7]  The Margin's success threshold, from Grade.
  * @param {boolean} [opts.upgradeConditions] A Commendation turns With Conditions into Approved.
  * @param {number} [opts.suppressDissonance]  Violet 1s that don't cause Dissonance (Commendation).
@@ -125,13 +130,19 @@ export function evaluateRoll({ margin, white = [], violet = [] }, {
   let tier = tierFor(successes, difficulty);
   if (upgradeConditions && tier === "conditions") tier = "approved";
 
+  const hindranceStamp = Boolean(encumbrance);
   return {
     successes, difficulty, tier,
     marginSuccess, marginTarget, grace, error, dissonance,
-    // Every Margin of Error gives the GM +1 Scrutiny, in addition to the twist.
+    // Every Margin of Error gives the GM 1 Scrutiny. Nothing happens at once: the GM spends it on a twist later.
     scrutiny: error ? 1 : 0,
-    // Any Encumbrance in play: an Error is the flaw biting, and the player earns a Stamp.
-    stampEarned: error && encumbrance
+    // A Hindrance in play and an Error: the flaw bites, and the GM complicates the scene through it.
+    bites: error && hindranceStamp,
+    // Stamps: a Hindrance in play earns one whatever the dice show; a Margin of Grace earns one.
+    hindranceStamp,
+    graceStamp: grace,
+    stamps: (hindranceStamp ? 1 : 0) + (grace ? 1 : 0),
+    stampEarned: hindranceStamp || grace
   };
 }
 
@@ -140,7 +151,8 @@ export function evaluateRoll({ margin, white = [], violet = [] }, {
  * but its Grace and Error don't happen. No Scrutiny, no Stamp, no twist.
  */
 export function withoutMarginEffects(outcome) {
-  return { ...outcome, grace: false, error: false, scrutiny: 0, stampEarned: false };
+  const stamps = outcome.hindranceStamp ? 1 : 0;
+  return { ...outcome, grace: false, error: false, scrutiny: 0, bites: false, graceStamp: false, stamps, stampEarned: stamps > 0 };
 }
 
 /* ── Commendations ── */

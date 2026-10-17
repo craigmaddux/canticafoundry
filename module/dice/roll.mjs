@@ -74,7 +74,7 @@ export async function rollExtraDie() {
  * @param {{id: string, name: string}} [input.sceneTrait] The one scene Trait picked for +1 die.
  * @param {number} [input.difficulty]       Successes needed: D0-D3, or an NPC's Rating.
  * @param {string} [input.targetName]       Name of the NPC whose Rating is the Difficulty.
- * @param {boolean} [input.greaterBound]    Force Greater Bound without a Hindrance (for macros). A Hindrance in play already is Greater Bound.
+ * @param {boolean} [input.greaterBound]    Greater Bound, a GM tier for an especially large or volatile Bound: Dissonance on 1-2.
  */
 export async function rollPool(actor, input) {
   const i18n = game.i18n;
@@ -82,11 +82,11 @@ export async function rollPool(actor, input) {
   const gift = Boolean(input.gift && actor.system.touched);
   const wantsExpedite = Boolean(input.expedite) && actor.system.stamps > 0;
   const baseDifficulty = Number.isFinite(Number(input.difficulty)) ? Number(input.difficulty) : 1;
-  // Hindrances never add dice. If any is in play, that is Greater Bound: the Margin of Error and
-  // Dissonance both widen to 1-2, and each Dissonance adds 2 to the Hum.
+  // Hindrances never add dice. If any is in play the roller earns a Stamp and the Margin of Error widens to 1-2.
   const encumbranceKeys = input.encumbranceKeys ?? [];
   const encumbrance = encumbranceKeys.length > 0 || Boolean(input.encumbrance);
-  const greaterBound = encumbrance || Boolean(input.greaterBound);
+  // A Hindrance never touches violet dice (spec v0.11). Greater Bound is the GM's call for a big or volatile Bound.
+  const greaterBound = Boolean(input.greaterBound);
 
   // From the Refrain on, the Hum itself widens Dissonance to 1-2 for every violet die (no one is told why),
   // without doubling what a Dissonance adds.
@@ -198,6 +198,8 @@ export async function rollPool(actor, input) {
       pool.capped && i18n.localize("CANTICA.Roll.Capped"),
       pool.floored && i18n.localize("CANTICA.Roll.Floored"),
       input.initiative && i18n.localize("CANTICA.Roll.TurnOrderNote"),
+      pool.boundEffect === "none" && i18n.localize("CANTICA.Roll.BoundNoEffect"),
+      greaterBound && i18n.localize("CANTICA.Roll.GreaterBoundNote"),
       gift && i18n.localize(`CANTICA.Roll.GiftEffect.${pool.giftEffect || "none"}`),
       marginTarget < 7 && i18n.format("CANTICA.Roll.MarginTarget", { n: marginTarget }),
       fx.upgradeConditions && i18n.localize("CANTICA.Roll.UpgradeNote"),
@@ -209,6 +211,9 @@ export async function rollPool(actor, input) {
     upgradeConditions: fx.upgradeConditions,
     dissonanceLabel: outcome.dissonance ? i18n.format("CANTICA.Roll.DissonanceCount", { n: outcome.dissonance }) : "",
     stampNote: outcome.stampEarned,
+    hindranceStamp: outcome.hindranceStamp,
+    graceStamp: outcome.graceStamp,
+    bites: outcome.bites,
     complication: null
   };
 
@@ -228,7 +233,8 @@ export async function rollPool(actor, input) {
 
   // Stamps: Expedite spends one; a Hindrance biting earns one. Settle them in a single update.
   // (Refile and Countersign are spent after the roll, from the card.)
-  const stampDelta = (outcome.stampEarned ? 1 : 0) - (expedite ? 1 : 0);
+  // A Hindrance in play (whatever the dice show) and a Margin of Grace each earn one; Expedite spends one.
+  const stampDelta = (outcome.stamps ?? (outcome.stampEarned ? 1 : 0)) - (expedite ? 1 : 0);
   if (stampDelta) await actor.adjustStamps(stampDelta);
 
   // Every Margin of Error gives the GM +1 Scrutiny.

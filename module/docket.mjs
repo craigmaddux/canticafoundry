@@ -35,14 +35,18 @@ export const isExpired = d => whole(d.round) > whole(d.deadline);
 export const status = d => (isFull(d) ? "full" : isExpired(d) ? "expired" : "open");
 
 /**
- * How it ends: full, it works cleanly; at the Deadline with half the boxes or more, it half works (something is
- * saved, something is lost, or it works at a real cost); with fewer, it fails. Null while it is still open.
+ * How it ends (spec v0.11, graded): full, it works cleanly; at the Deadline with three quarters of the boxes or more,
+ * it works at a real cost; half or more, it half works (something saved, something lost); fewer, it fails. Null while
+ * it is still open.
  */
 export function outcome(d) {
   const s = status(d);
   if (s === "open") return null;
   if (s === "full") return "works";
-  return whole(d.successes) * 2 >= whole(d.boxes) ? "half" : "fails";
+  const filled = whole(d.successes);
+  const boxes = whole(d.boxes);
+  if (filled * 4 >= boxes * 3) return "cost";
+  return filled * 2 >= boxes ? "half" : "fails";
 }
 
 export const addSuccesses = (d, n) => ({ ...d, successes: Math.max(0, whole(d.successes) + Math.trunc(Number(n) || 0)) });

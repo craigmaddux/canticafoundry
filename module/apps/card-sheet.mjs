@@ -1,5 +1,6 @@
 import { SYSTEM_ID } from "../config.mjs";
 import { addTrait, setActiveCard, amendScene } from "../cards.mjs";
+import { locationsOf, locationOptions } from "../scene.mjs";
 import { isShown, setShown, openPanel } from "../scene-panel.mjs";
 import { repaintCard } from "../card-art.mjs";
 import * as docket from "../docket.mjs";
@@ -25,6 +26,7 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       addTrait: CardSheet.#onAddTrait,
       deleteTrait: CardSheet.#onDeleteTrait,
       setActive: CardSheet.#onSetActive,
+      openCard: CardSheet.#onOpenCard,
       amend: CardSheet.#onAmend,
       toggleTable: CardSheet.#onToggleTable,
       popOut: CardSheet.#onPopOut,
@@ -91,6 +93,20 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
     // Keep each Trait's real position: the form fields are named by array index.
     context.traits = system.traits.map((trait, index) => ({ ...trait, index, open: this.#open.has(trait.id) }));
+
+    // Locations and Sections: the place this card is part of, and the Sections that are part of it.
+    const cards = game.actors.filter(a => a.type === "card");
+    const lookup = id => game.actors.get(id);
+    const parent = system.location ? lookup(system.location) : null;
+    context.location = parent ? { id: parent.id, name: parent.name } : null;
+    context.locationPath = locationsOf(this.actor, lookup).map(c => c.name).join(" · ");
+    context.locationChoices = locationOptions(this.actor, cards, lookup)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(c => ({ id: c.id, name: c.name, selected: c.id === system.location }));
+    context.sectionCards = cards.filter(c => c.system.location === this.actor.id)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(c => ({ id: c.id, name: c.name, links: c.system.links }));
+    context.showPlace = isGM || parent || system.links || context.sectionCards.length;
     return context;
   }
 
@@ -131,6 +147,11 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     const { trait } = target.dataset;
     this.#open.delete(trait);
     await this.actor.update({ "system.traits": this.actor.toObject().system.traits.filter(t => t.id !== trait) });
+  }
+
+  /** Open a linked card's sheet: the Location, or one of its Sections. */
+  static #onOpenCard(event, target) {
+    game.actors.get(target.dataset.id)?.sheet.render(true);
   }
 
   static async #onSetActive() {

@@ -1,7 +1,7 @@
 import { SYSTEM_ID, SKILL_GROUPS, SKILL_MAX } from "../config.mjs";
 import { STEPS } from "../registration-steps.mjs";
 import { CREATION_BUDGET } from "../progression.mjs";
-import { loadBriefs, findBrief, briefSkills, suggestionsFor, giftFor } from "../briefs.mjs";
+import { loadBriefs, findBrief, briefSkills, suggestionsFor, giftFor, quickCreate } from "../briefs.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -45,6 +45,7 @@ export default class Registration extends HandlebarsApplicationMixin(Application
       pick: Registration.#onPick,
       pickPair: Registration.#onPickPair,
       pickBrief: Registration.#onPickBrief,
+      quickCreate: Registration.#onQuickCreate,
       setSkill: Registration.#onSetSkill,
       finish: Registration.#onFinish
     }
@@ -92,6 +93,13 @@ export default class Registration extends HandlebarsApplicationMixin(Application
       context.briefCards = list.map(b => ({ id: b.id, name: b.name, tagline: b.tagline, selected: b.id === system.brief }));
       context.noBrief = !system.brief;
       context.briefIntro = brief ? { greeting: brief.greeting, blurb: brief.blurb, shine: brief.shine } : null;
+      // Quick create: the whole Brief at once, straight to the read-back. Only while the character is in creation.
+      context.quickCreate = brief && system.creation ? {
+        name: brief.name,
+        hasGift: Boolean(brief.gift),
+        label: i18n.format("CANTICA.Brief.Quick", { name: brief.name }),
+        touchedLabel: i18n.localize("CANTICA.Brief.QuickTouched")
+      } : null;
     }
     if (step.suggests && brief) {
       context.suggestions = suggestionsFor(step.suggests, brief);
@@ -124,6 +132,7 @@ export default class Registration extends HandlebarsApplicationMixin(Application
 
     if (step.kind === "review") {
       const traits = ["station", "trait1", "trait2", "trait3"].map(k => system.traits[k]).filter(Boolean);
+      context.quickNote = brief ? i18n.format("CANTICA.Brief.QuickNote", { name: brief.name }) : "";
       const skills = Object.entries(system.skills).filter(([, rating]) => rating > 0)
         .sort((a, b) => b[1] - a[1])
         .map(([key, rating]) => `${i18n.localize(`CANTICA.Skill.${key}.label`)} ${rating}`);
@@ -222,6 +231,19 @@ export default class Registration extends HandlebarsApplicationMixin(Application
       if (this.actor.system.creation) update["system.skills"] = briefSkills(brief);
     }
     await this.actor.update(update);
+    this.render();
+  }
+
+  /**
+   * Quick create from the chosen Brief: Station, two Traits, two Hindrances and skills (and, if asked, its Gift and
+   * Drawback), then straight to the read-back. Anything can still be changed by going back, or on the sheet.
+   */
+  static async #onQuickCreate(event, target) {
+    await this.#saveAll();
+    const brief = findBrief(this.actor.system.brief);
+    if (!brief || !this.actor.system.creation) return;
+    await this.actor.update(quickCreate(brief, { touched: target.dataset.touched === "true" }));
+    this.#step = STEPS.findIndex(s => s.kind === "review");
     this.render();
   }
 

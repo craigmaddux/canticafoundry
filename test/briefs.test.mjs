@@ -5,7 +5,7 @@ import vm from "node:vm";
 import { SKILLS } from "../module/config.mjs";
 import { skillsCost, CREATION_BUDGET } from "../module/progression.mjs";
 import { RULE_BREAKS } from "../module/rules.mjs";
-import { findBrief, briefSkills, suggestionsFor, giftFor, commendationSuggestion } from "../module/briefs.mjs";
+import { findBrief, briefSkills, suggestionsFor, giftFor, commendationSuggestion, quickCreate } from "../module/briefs.mjs";
 
 // Load the real data, exactly as the website and the system do.
 const ctx = { window: {} };
@@ -81,4 +81,22 @@ test("the Commendation is offered once, and not again after it is taken", () => 
   assert.equal(commendationSuggestion(eng, [{ name: "never misses a rivet" }]), null);
   assert.ok(commendationSuggestion(eng, [{ name: "Something Else" }]));
   assert.equal(commendationSuggestion(null, []), null);
+});
+
+test("Quick create takes a whole Brief: Station, two Traits, two Hindrances, skills; the Gift only if Touched", () => {
+  for (const brief of ctx.window.STATION_BRIEFS) {
+    const plain = quickCreate(brief);
+    assert.equal(plain["system.traits.station"], brief.name);
+    assert.equal(plain["system.traits.trait1"], brief.traits[0]);
+    assert.equal(plain["system.traits.trait2"], brief.traits[1]);
+    assert.equal(plain["system.encumbrances.personal"], brief.hindrances[0]);
+    assert.equal(plain["system.encumbrances.circumstantial"], brief.hindrances[1]);
+    assert.equal(skillsCost(plain["system.skills"]), CREATION_BUDGET);
+    assert.equal(plain["system.touched"], false);
+    assert.equal(plain["system.gift"], undefined);
+    const touched = quickCreate(brief, { touched: true });
+    assert.equal(touched["system.touched"], Boolean(brief.gift));
+    assert.equal(touched["system.gift"], brief.gift);
+  }
+  assert.deepEqual(quickCreate(null), {});
 });

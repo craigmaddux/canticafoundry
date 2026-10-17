@@ -49,8 +49,9 @@ export async function takeNotice(event, target) {
   const incoming = target.dataset.kind;
   let track = actor.toObject().system.notices;
 
-  // A character with a Stamp may Reclassify as the Notice lands.
-  const canReclassify = actor.type === "character" && actor.system.stamps > 0;
+  // A character with a Stamp may Reclassify a Major that lands on them directly (a Commended or Denied result),
+  // making it a Minor. A Minor that overflows into a Major can't be (spec v0.11).
+  const canReclassify = actor.type === "character" && actor.system.stamps > 0 && incoming === "major";
 
   const notice = await DialogV2.prompt({
     window: { title: i18n.format("CANTICA.Track.TakeTitle", { kind: i18n.localize(`CANTICA.Track.${incoming}`) }) },

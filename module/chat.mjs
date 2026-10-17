@@ -2,6 +2,7 @@ import { SYSTEM_ID } from "./config.mjs";
 import { getScrutiny, spendScrutiny } from "./scrutiny.mjs";
 import { renderRollCard, rollExtraDie } from "./dice/roll.mjs";
 import { escapeHtml } from "./lore-text.mjs";
+import { traitGroups } from "./scene.mjs";
 import { canRefile, canRaise, refile, raiseRating } from "./card-actions.mjs";
 import { shownOutcome } from "./roll-card.mjs";
 import { countRoll } from "./docket.mjs";
@@ -109,7 +110,9 @@ function complicate(message, html, flags) {
   const card = game.actors.get(state?.sceneId);
 
   // Only the GM sees it, only once, and only while there is Scrutiny to spend and a Trait to use.
-  if (!game.user.isGM || state?.complication || !card?.system.traits.some(trait => trait.name) || getScrutiny() < 1) {
+  // The card's Traits, and those of the Location it is part of.
+  const usable = card ? [...new Set(traitGroups(card, id => game.actors.get(id)).flatMap(g => g.traits.map(t => t.name)))] : [];
+  if (!game.user.isGM || state?.complication || !usable.length || getScrutiny() < 1) {
     button.hidden = true;
     return;
   }
@@ -117,12 +120,12 @@ function complicate(message, html, flags) {
   button.addEventListener("click", async event => {
     event.preventDefault();
     const i18n = game.i18n;
-    const traits = card.system.traits.filter(trait => trait.name);
+    const traits = usable;
     const chosen = await DialogV2.prompt({
       window: { title: i18n.localize("CANTICA.Complication.Title") },
       content: `<p class="hint">${i18n.format("CANTICA.Complication.Prompt", { scene: card.name })}</p>
         <div class="form-group"><label>${i18n.localize("CANTICA.Complication.Which")}</label>
-          <select name="trait">${traits.map(trait => `<option value="${escapeHtml(trait.name)}">${escapeHtml(trait.name)}</option>`).join("")}</select></div>`,
+          <select name="trait">${traits.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}</select></div>`,
       ok: {
         label: i18n.localize("CANTICA.Complication.Confirm"),
         callback: (ev, btn) => btn.form.elements.trait.value

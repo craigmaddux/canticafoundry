@@ -101,13 +101,16 @@
         <span class="check-label sign">—</span>
         <span class="check-text">{{localize "CANTICA.Pool.NoSceneTrait"}}</span>
       </label>
+      {{#each groups}}
+      {{#if label}}<div class="scene-section-label">{{label}}</div>{{/if}}
       {{#each traits}}
       <label class="check scene-check" title="{{note}}">
-        <input type="radio" name="sceneTrait-{{../id}}" value="{{value}}" data-id="{{id}}" data-name="{{name}}">
+        <input type="radio" name="sceneTrait-{{cardId}}" value="{{value}}" data-id="{{id}}" data-name="{{name}}">
         <span class="check-label sign">+1</span>
-        <span class="check-text">{{name}}</span>
+        <span class="check-text">{{short}}</span>
         {{#if note}}<span class="check-note">{{note}}</span>{{/if}}
       </label>
+      {{/each}}
       {{else}}
       <p class="hint">{{localize "CANTICA.Pool.NoSceneTraits"}}</p>
       {{/each}}
@@ -161,6 +164,11 @@
     </label>
     {{/if}}
     <p class="hint">{{localize "CANTICA.Pool.GearHint"}}</p>
+    <label class="check">
+      <input type="checkbox" name="greaterBound">
+      <span class="check-label">{{localize "CANTICA.Pool.GreaterBound"}}</span>
+      <span class="check-note">{{localize "CANTICA.Pool.GreaterBoundNote"}}</span>
+    </label>
   </fieldset>
 
   <fieldset>
