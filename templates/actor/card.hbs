@@ -12,6 +12,7 @@
         {{#if system.active}}<span class="badge">{{localize "CANTICA.Card.Active"}}</span>{{/if}}
         {{#if isGM}}
         <button type="button" data-action="setActive" {{#if system.active}}disabled{{/if}}>{{localize "CANTICA.Card.MakeActive"}}</button>
+        <button type="button" data-action="repaintToken" title="{{localize 'CANTICA.Card.RepaintHint'}}">{{localize "CANTICA.Card.Repaint"}}</button>
         <button type="button" data-action="toggleTable" title="{{localize 'CANTICA.Card.TableHint'}}">{{#if shown}}{{localize "CANTICA.Card.HideFromTable"}}{{else}}{{localize "CANTICA.Card.ShowOnTable"}}{{/if}}</button>
         {{/if}}
         <button type="button" data-action="popOut" title="{{localize 'CANTICA.Card.PopOutHint'}}">{{localize "CANTICA.Card.PopOut"}}</button>

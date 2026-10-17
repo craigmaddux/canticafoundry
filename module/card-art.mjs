@@ -12,7 +12,7 @@ import { layoutCard, cardHash, imageSize, coverCrop, COLOR } from "./card-layout
  */
 
 const FOLDER = "cantica-cards";
-let warned = false;
+let lastWarned = 0;
 
 /** Placeholder pictures that mean "no art set yet". */
 const hasArt = img => Boolean(img) && !/(mystery-man|emblem)\.svg$/.test(img);
@@ -22,8 +22,9 @@ const isPainter = () => game.user.isActiveGM;
 
 function warn(error) {
   console.warn(`${SYSTEM_ID} | could not paint a card for the tabletop`, error);
-  if (warned) return;
-  warned = true;
+  // Tell the GM, but not on every attempt.
+  if (Date.now() - lastWarned < 30000) return;
+  lastWarned = Date.now();
   ui.notifications.warn(game.i18n.localize("CANTICA.Card.PaintFailed"));
 }
 
@@ -100,28 +101,80 @@ async function upload(canvas, filename) {
   return response?.path ?? `${directory}/${file.name}`;
 }
 
-/** Paint a card token's picture, unless it already shows the card as it now is. */
+/** What a card token should show right now: the words, the size, and a hash of both. */
+function describe(token) {
+  const actor = token.actor;
+  const { width, height } = imageSize(token.width, token.height);
+  const data = {
+    name: actor.name,
+    description: actor.system.description,
+    traits: actor.system.traits.map(trait => trait.name).filter(Boolean),
+    // Only the running tally of a Docket's successes is shown on the table, never its boxes or Deadline.
+    tally: actor.system.docket.open ? actor.system.docket.successes : null,
+    art: hasArt(actor.img) ? actor.img : null
+  };
+  return { data, width, height, hash: cardHash([data, width, height]) };
+}
+
+/**
+ * Paint once. Returns "stale" if the card changed while it was being painted and uploaded, in which case the
+ * picture is not applied (it would show an older card) and the caller paints again.
+ */
+async function paintOnce(token, force) {
+  const actor = token.actor;
+  if (actor?.type !== "card") return null;
+
+  const { data, width, height, hash } = describe(token);
+  if (!force && token.getFlag(SYSTEM_ID, "painted") === hash) return null;
+
+  const canvas = await renderCardImage(data, width, height);
+  const path = await upload(canvas, `${actor.id}-${width}x${height}-${hash}`);
+  if (describe(token).hash !== hash) return "stale";
+  await token.update({ "texture.src": path, "texture.fit": "fill", [`flags.${SYSTEM_ID}.painted`]: hash });
+  return null;
+}
+
+/** Tokens being painted now, so two paints of one token never race. */
+const painting = new Map();
+
+/**
+ * Paint a card token's picture, unless it already shows the card as it now is. A paint takes a while (the picture is
+ * saved to the world's folder), and the card can be edited again meanwhile. Paints of one token therefore run one at a
+ * time, and an edit that arrives during one makes it go round again, so the token always ends up showing the latest card
+ * and never an older one that happened to finish last.
+ */
 export async function paintToken(token, { force = false } = {}) {
+  const running = painting.get(token.uuid);
+  if (running) {
+    running.again = true;
+    running.force ||= force;
+    return;
+  }
+
+  const run = { again: false, force: false };
+  painting.set(token.uuid, run);
   try {
-    const actor = token.actor;
-    if (actor?.type !== "card") return;
+    let next = force;
+    for (let round = 0; round < 5; round++) {
+      run.again = false;
+      run.force = false;
+      const result = await paintOnce(token, next);
+      next = run.force;
+      if (result !== "stale" && !run.again) break;
+    }
+  } catch (error) {
+    warn(error);
+  } finally {
+    painting.delete(token.uuid);
+  }
+}
 
-    const { width, height } = imageSize(token.width, token.height);
-    const data = {
-      name: actor.name,
-      description: actor.system.description,
-      traits: actor.system.traits.map(trait => trait.name).filter(Boolean),
-      // Only the running tally of a Docket's successes is shown on the table, never its boxes or Deadline.
-      tally: actor.system.docket.open ? actor.system.docket.successes : null,
-      art: hasArt(actor.img) ? actor.img : null
-    };
-    const hash = cardHash([data, width, height]);
-    if (!force && token.getFlag(SYSTEM_ID, "painted") === hash) return;
-
-    const canvas = await renderCardImage(data, width, height);
-    const path = await upload(canvas, `${actor.id}-${width}x${height}-${hash}`);
-    await token.update({ "texture.src": path, "texture.fit": "fill", [`flags.${SYSTEM_ID}.painted`]: hash });
-  } catch (error) { warn(error); }
+/** Repaint every token of one card, on every scene (the GM's Repaint button on the card's sheet). */
+export async function repaintCard(actor) {
+  if (!game.user.isGM) return;
+  for (const scene of game.scenes) {
+    for (const token of scene.tokens) if (token.actorId === actor.id) await paintToken(token, { force: true });
+  }
 }
 
 /* -------------------------------------------- */
@@ -192,7 +245,8 @@ export function registerCardArt() {
 
   // The card is a different shape now.
   Hooks.on("updateToken", (token, changes) => {
-    if (isCard(token) && ("width" in changes || "height" in changes)) queue(token);
+    // A card token that is not linked to its card keeps its own edits (a "delta"): those change what it shows too.
+    if (isCard(token) && ("width" in changes || "height" in changes || "delta" in changes)) queue(token);
   });
 
   // The card's words or art changed: repaint wherever it sits.

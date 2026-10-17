@@ -1,6 +1,7 @@
 import { SYSTEM_ID } from "../config.mjs";
 import { addTrait, setActiveCard, amendScene } from "../cards.mjs";
 import { isShown, setShown, openPanel } from "../scene-panel.mjs";
+import { repaintCard } from "../card-art.mjs";
 import * as docket from "../docket.mjs";
 import * as proceedings from "../proceedings.mjs";
 
@@ -27,6 +28,7 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       amend: CardSheet.#onAmend,
       toggleTable: CardSheet.#onToggleTable,
       popOut: CardSheet.#onPopOut,
+      repaintToken: CardSheet.#onRepaintToken,
       openDocket: CardSheet.#onOpenDocket,
       closeDocket: CardSheet.#onCloseDocket,
       docketAdjust: CardSheet.#onDocketAdjust,
@@ -197,6 +199,12 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
   static async #onToggleTable() {
     await setShown(this.actor.id, !isShown(this.actor.id));
     this.render();
+  }
+
+  /** GM: paint the card's token(s) again from the card as it is now. */
+  static async #onRepaintToken() {
+    await repaintCard(this.actor);
+    ui.notifications.info(game.i18n.localize("CANTICA.Card.Repainted"));
   }
 
   /** Open the panel on this screen only. */
