@@ -30,6 +30,8 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       finishCreation: CharacterSheet.#onFinishCreation,
       register: CharacterSheet.#onRegister,
       buyTraitSlot: CharacterSheet.#onBuyTraitSlot,
+      awardTrait: CharacterSheet.#onAwardTrait,
+      resolveHindrance: CharacterSheet.#onResolveHindrance,
       setTraitRank: CharacterSheet.#onSetTraitRank,
       adjustStamps: CharacterSheet.#onAdjustStamps,
       startSession: CharacterSheet.#onStartSession,
@@ -131,6 +133,9 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
     ];
     context.rankHint = i18n.format("CANTICA.Traits.Rank.Hint", { cost: TRAIT_RANK_COST, grade: TRAIT_RANK_GRADE });
     context.canBuyTrait = !system.creation && system.traitSlots < TRAIT_MAX;
+    // A free Trait is the GM's to award, after a major story moment.
+    context.canAwardTrait = isGM && this.isEditable && !system.creation
+      && (system.traitSlots < TRAIT_MAX || OPEN_TRAITS.slice(0, system.traitSlots).some(key => !system.traits[key]));
     context.traitCost = TRAIT_COST;
 
     // Commendations: slots come with Grade (II, V, VIII).
@@ -249,6 +254,38 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       const result = await this.actor.setTraitRank(key, 1);
       if (!result.ok) ui.notifications.warn(game.i18n.localize(`CANTICA.Traits.Rank.Deny.${result.reason}`));
     }
+  }
+
+  /** GM: award a Trait for free, after a major story moment. */
+  static async #onAwardTrait() {
+    const i18n = game.i18n;
+    const text = await DialogV2.prompt({
+      window: { title: i18n.localize("CANTICA.Traits.AwardTitle") },
+      content: `<p class="hint">${i18n.localize("CANTICA.Traits.AwardHint")}</p>
+        <div class="form-group"><label>${i18n.localize("CANTICA.Traits.AwardWhat")}</label>
+          <input type="text" name="trait" placeholder="${i18n.localize("CANTICA.Traits.AwardPlaceholder")}" autofocus></div>`,
+      ok: { label: i18n.localize("CANTICA.Traits.Award"), callback: (event, button) => button.form.elements.trait.value.trim() },
+      rejectClose: false
+    });
+    if (text !== null && text !== undefined) await this.actor.awardTrait(text);
+  }
+
+  /** The story resolves a Hindrance: it becomes a Trait, and the player writes a new Hindrance. */
+  static async #onResolveHindrance(event, target) {
+    const i18n = game.i18n;
+    const which = target.dataset.which;
+    const old = this.actor.system.encumbrances[which];
+    if (!old) return;
+    const replacement = await DialogV2.prompt({
+      window: { title: i18n.localize("CANTICA.Encumbrance.ResolveTitle") },
+      content: `<p class="hint">${i18n.format("CANTICA.Encumbrance.ResolveHint", { old: escapeHtml(old) })}</p>
+        <div class="form-group"><label>${i18n.localize("CANTICA.Encumbrance.ResolveNew")}</label>
+          <input type="text" name="replacement" placeholder="${i18n.localize(`CANTICA.Encumbrance.${which}Prompt`)}" autofocus></div>`,
+      ok: { label: i18n.localize("CANTICA.Encumbrance.Resolve"), callback: (event, button) => button.form.elements.replacement.value.trim() },
+      rejectClose: false
+    });
+    if (replacement === null || replacement === undefined) return;
+    await this.actor.resolveHindrance(which, replacement);
   }
 
   static async #onBuyTraitSlot() {

@@ -98,7 +98,9 @@ async function upload(canvas, filename) {
 
   const file = new File([blob], `${filename}.webp`, { type: "image/webp" });
   const response = await FilePicker.upload("data", directory, file, {}, { notify: false });
-  return response?.path ?? `${directory}/${file.name}`;
+  // An upload that fails can return nothing rather than throw: then there is no picture to point the token at.
+  if (!response?.path) throw new Error(`the card's picture could not be saved in ${directory}`);
+  return response.path;
 }
 
 /** What a card token should show right now: the words, the size, and a hash of both. */

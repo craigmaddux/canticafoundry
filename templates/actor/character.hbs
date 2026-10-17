@@ -46,6 +46,7 @@
 
         <section class="panel traits">
           <h2>{{localize "CANTICA.Sheet.Traits"}}
+            {{#if canAwardTrait}}<button type="button" class="add" data-action="awardTrait" title="{{localize 'CANTICA.Traits.AwardHint'}}">{{localize "CANTICA.Traits.Award"}}</button>{{/if}}
             {{#if canBuyTrait}}<button type="button" class="add" data-action="buyTraitSlot" title="{{localize 'CANTICA.Traits.BuyHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Traits.Buy"}} ({{traitCost}})</button>{{/if}}
           </h2>
           {{#each traitRows}}
@@ -67,11 +68,13 @@
           <h2>{{localize "CANTICA.Encumbrance.Heading"}}</h2>
           <p class="hint">{{localize "CANTICA.Encumbrance.Hint"}}</p>
           <div class="trait enc" title="{{localize 'CANTICA.Encumbrance.personalHint'}}">
-            <label for="enc-personal">{{localize "CANTICA.Encumbrance.personal"}}</label>
+            <label for="enc-personal">{{localize "CANTICA.Encumbrance.personal"}}
+              {{#if system.encumbrances.personal}}<button type="button" class="resolve" data-action="resolveHindrance" data-which="personal" title="{{localize 'CANTICA.Encumbrance.ResolveButtonHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Encumbrance.Resolve"}}</button>{{/if}}</label>
             <input id="enc-personal" type="text" name="system.encumbrances.personal" value="{{system.encumbrances.personal}}" placeholder="{{localize 'CANTICA.Encumbrance.personalPrompt'}}" {{#unless editable}}disabled{{/unless}}>
           </div>
           <div class="trait enc" title="{{localize 'CANTICA.Encumbrance.circumstantialHint'}}">
-            <label for="enc-circ">{{localize "CANTICA.Encumbrance.circumstantial"}}</label>
+            <label for="enc-circ">{{localize "CANTICA.Encumbrance.circumstantial"}}
+              {{#if system.encumbrances.circumstantial}}<button type="button" class="resolve" data-action="resolveHindrance" data-which="circumstantial" title="{{localize 'CANTICA.Encumbrance.ResolveButtonHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Encumbrance.Resolve"}}</button>{{/if}}</label>
             <input id="enc-circ" type="text" name="system.encumbrances.circumstantial" value="{{system.encumbrances.circumstantial}}" placeholder="{{localize 'CANTICA.Encumbrance.circumstantialPrompt'}}" {{#unless editable}}disabled{{/unless}}>
           </div>
         </section>

@@ -29,7 +29,7 @@
     </section>
 
     <div class="panel-actions">
-      <button type="button" data-action="amend" title="{{localize 'CANTICA.Card.AmendHint'}}">{{localize "CANTICA.Card.AmendButton"}}</button>
+      {{#unless isGM}}<button type="button" data-action="amend" title="{{localize 'CANTICA.Card.AmendHint'}}">{{localize "CANTICA.Card.AmendButton"}}</button>{{/unless}}
       <button type="button" data-action="openSheet">{{localize "CANTICA.Card.OpenSheet"}}</button>
       {{#if shown}}{{#if isGM}}<button type="button" data-action="hideFromTable">{{localize "CANTICA.Card.HideFromTable"}}</button>{{/if}}{{/if}}
     </div>

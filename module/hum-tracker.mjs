@@ -1,6 +1,7 @@
 import { SYSTEM_ID } from "./config.mjs";
 import { HUM_BANDS, HUM_MAX, bandFor, changeHum } from "./hum.mjs";
 import { spendScrutiny } from "./scrutiny.mjs";
+import { serial } from "./serial.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -15,16 +16,20 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 const SOCKET = `system.${SYSTEM_ID}`;
 let tracker = null;
+const queue = serial();
 
 export const getHum = () => game.settings.get(SYSTEM_ID, "hum");
 
 /** GM: change the Hum, and tell the GM when it enters a new band or reaches 20. */
-async function applyHum(delta) {
-  const result = changeHum(getHum(), delta);
-  if (result.value === result.before) return result;
-  await game.settings.set(SYSTEM_ID, "hum", result.value);
-  if (result.crossed || result.gives) await whisperCrossing(result);
-  return result;
+function applyHum(delta) {
+  // One change at a time, so two Dissonances arriving together both count.
+  return queue(async () => {
+    const result = changeHum(getHum(), delta);
+    if (result.value === result.before) return result;
+    await game.settings.set(SYSTEM_ID, "hum", result.value);
+    if (result.crossed || result.gives) await whisperCrossing(result);
+    return result;
+  });
 }
 
 /** A private note in the chat log: only the GM sees it. */
@@ -66,6 +71,8 @@ export function listenForHum() {
 export async function addHum(delta) {
   if (!(delta > 0)) return;
   if (game.user.isGM) return applyHum(delta);
+  // With no GM connected there is no one to hear it. (Players are never told the Hum exists.)
+  if (!game.users.activeGM) return;
   game.socket.emit(SOCKET, { action: "hum", delta });
 }
 

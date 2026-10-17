@@ -51,11 +51,28 @@ function claimStamp(message, html, flags, actor) {
 
   button.addEventListener("click", async event => {
     event.preventDefault();
-    if (!actor?.isOwner || message.flags[SYSTEM_ID]?.stampClaimed) return;
-    // Mark the card first so a double click can't award two Stamps.
-    await message.update({ [`flags.${SYSTEM_ID}.stampClaimed`]: true });
-    await actor.adjustStamps(1);
+    if (button.disabled || !actor?.isOwner || message.flags[SYSTEM_ID]?.stampClaimed) return;
+    // Disable it now, before anything is awaited, so a double click can't award two Stamps.
+    button.disabled = true;
+    if (message.canUserModify(game.user, "update")) {
+      await message.update({ [`flags.${SYSTEM_ID}.stampClaimed`]: true });
+      await actor.adjustStamps(1);
+      return;
+    }
+    // Someone else made this roll (the GM, or a co-owner): the GM's client marks the card and gives the Stamp.
+    if (!game.users.activeGM) {
+      button.disabled = false;
+      return ui.notifications.warn(game.i18n.localize("CANTICA.Card.NoGM"));
+    }
+    game.socket.emit(SOCKET, { action: "claim-stamp", messageId: message.id });
   });
+}
+
+/** A change to someone else's card goes through the GM: check one is here before any Stamp is spent. */
+function gmNeededFor(message) {
+  if (message.canUserModify(game.user, "update") || game.users.activeGM) return false;
+  ui.notifications.warn(game.i18n.localize("CANTICA.Card.NoGM"));
+  return true;
 }
 
 /** The roller: spend a Stamp to reroll one failed white die, once per roll. */
@@ -74,6 +91,7 @@ function refileDie(message, html, flags, actor) {
     button.disabled = true;
     const current = message.flags[SYSTEM_ID]?.state;
     if (!current || !canRefile(current) || actor.system.stamps < 1) return;
+    if (gmNeededFor(message)) { button.disabled = false; return; }
     await actor.adjustStamps(-1);
     const value = await rollExtraDie();
     await redraw(message, refile(current, { value, who: actor.name }));
@@ -133,6 +151,7 @@ function negate(message, html, flags, actor) {
   button.addEventListener("click", async event => {
     event.preventDefault();
     if (actor.system.stamps < 1) return;
+    if (gmNeededFor(message)) return;
     button.disabled = true;
     await actor.adjustStamps(-1);
     const current = message.flags[SYSTEM_ID]?.state ?? state;
@@ -256,12 +275,23 @@ export function listenForRollChanges() {
     // A Countersign: one Stamp, given to another character. The giver has already spent theirs.
     if (data?.action === "give-stamp" && game.user.isActiveGM) {
       const to = game.actors.get(data.toId);
-      if (to?.type === "character") to.adjustStamps(1);
+      if (to?.type === "character") to.adjustStamps(1).catch(error => console.error("cantica |", error));
+      return;
+    }
+    // A Margin of Grace on a card the player can't edit: mark it claimed and give the Stamp, once.
+    if (data?.action === "claim-stamp" && game.user.isActiveGM) {
+      const message = game.messages.get(data.messageId);
+      const flags = message?.flags?.[SYSTEM_ID];
+      const actor = game.actors.get(flags?.actorId);
+      if (!flags || flags.stampClaimed || !flags.grace || !actor) return;
+      message.update({ [`flags.${SYSTEM_ID}.stampClaimed`]: true })
+        .then(() => actor.adjustStamps(1))
+        .catch(error => console.error("cantica |", error));
       return;
     }
     if (data?.action !== "redraw-roll" || !game.user.isActiveGM) return;
     const message = game.messages.get(data.messageId);
     if (!message?.flags?.[SYSTEM_ID]?.state || !data.state || typeof data.state !== "object") return;
-    write(message, data.state);
+    write(message, data.state).catch(error => console.error("cantica |", error));
   });
 }

@@ -3,6 +3,7 @@ import { buildPool, DIFFICULTIES, commendationEffects, traitDice } from "../rule
 import { sceneTraitDice } from "../scene.mjs";
 import { sceneChoices } from "../cards.mjs";
 import { rollPool } from "../dice/roll.mjs";
+import { ROLL_MODES } from "../consequence.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -70,6 +71,8 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
         }))
       })),
       hasTraits: this.actor.rollTraits.length > 0,
+      // Acting against or resisting someone (or a hazard), or a Request for Record: the card says what the result means.
+      modes: ROLL_MODES.map(value => ({ value, label: i18n.localize(`CANTICA.Pool.Modes.${value}`), selected: value === "plain" })),
       boundGear: this.actor.type === "character" ? this.actor.system.gear.filter(item => item.bound && item.name).map(item => ({ name: item.name })) : [],
       penalties: [0, 1, 2, 3].map(n => ({ value: n, label: n ? `−${n}` : i18n.localize("CANTICA.Pool.NoPenalty"), checked: n === 0 })),
       stamps: this.actor.system.stamps,
@@ -142,6 +145,11 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
 
   _onRender(context, options) {
     super._onRender?.(context, options);
+
+    // A Request for Record is a Procedure roll.
+    this.element.elements.mode?.addEventListener("change", event => {
+      if (event.target.value === "record" && this.element.elements.skill) this.element.elements.skill.value = "procedure";
+    });
     this.element.querySelectorAll("input, select").forEach(el => {
       el.addEventListener("input", () => this.#updatePreview());
       el.addEventListener("change", () => this.#updatePreview());
@@ -175,7 +183,7 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
     const picks = [];
     for (const n of [1, 2]) {
       if (n === 2 && form.querySelector('.trait-slot[data-slot="2"]')?.hidden) continue;
-      const key = form.querySelector(`input[name="trait-${n}"]:checked`)?.value;
+      const key = form.querySelector(`input[name="trait-${n}"]:checked:not(:disabled)`)?.value;
       if (key) picks.push({ key, stretch: Boolean(form.elements[`stretch-${n}`]?.checked) });
     }
     return picks;
@@ -204,6 +212,7 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
       bound: form.elements.boundGear ? (form.elements.boundGear.value ? 1 : 0) : (form.elements.bound?.checked ? 1 : 0),
       boundName: form.elements.boundGear?.value ?? "",
       expedite: Boolean(form.elements.expedite?.checked),
+      mode: form.elements.mode?.value ?? "plain",
       help: Boolean(form.elements.help?.checked),
       noticeOnTarget: Boolean(form.elements.noticeOnTarget?.checked),
       sceneId,

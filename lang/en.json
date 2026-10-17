@@ -140,7 +140,22 @@
       "StartHint": "Scrutiny starts each session at one per player. You can also top every player's Stamps up to what their Grade begins a session with.",
       "StartPlayers": "Scrutiny to start with (one per player)",
       "StartStamps": "Top up the Stamps of the {n} player characters",
-      "Started": "A new session: Scrutiny is {n}."
+      "Started": "A new session: Scrutiny is {n}.",
+      "StartMinors": "Clear the Minor Notices of the {n} player characters (they clear at the end of a session)",
+      "Spend": "Spend Scrutiny",
+      "SpendTitle": "Spend Scrutiny",
+      "SpendHint": "Say what it is in the story. (A Complication, Raise the Rating and a Dissonance have their own buttons, on roll cards and in the Hum.)",
+      "SpendOn": "Spend 1 on",
+      "SpendStory": "In the story",
+      "SpendStoryPlaceholder": "The Proctors arrive.",
+      "SpendConfirm": "Spend 1 Scrutiny",
+      "Spent": "The ship pushes back",
+      "Spends": {
+        "push": "Push the Deadline of the Docket in {card} up a round",
+        "stepUp": "A Minor NPC acts as Major for one exchange",
+        "arrival": "Something comes in from offscreen",
+        "other": "Something else"
+      }
     },
     "Track": {
       "Heading": "Notices",
@@ -265,7 +280,14 @@
       "HelpNote": "Others are assisting: +1 die in total, however many help.",
       "NoticeOnTarget": "A Notice on the target",
       "NoticeOnTargetNote": "You are using a Notice an NPC carries against them: +1 die.",
-      "NoBoundGear": "None in play"
+      "NoBoundGear": "None in play",
+      "Mode": "What kind of roll",
+      "Modes": {
+        "plain": "An ordinary roll",
+        "act": "Acting against someone (their Rating is the Difficulty)",
+        "resist": "Resisting someone, or a hazard",
+        "record": "A Request for Record (Procedure)"
+      }
     },
     "Roll": {
       "Margin": "Margin",
@@ -380,7 +402,13 @@
           "needTenure": "Raising a Trait to rank 2 costs 6 Tenure.",
           "noLower": "Only the GM can lower a Trait's rank."
         }
-      }
+      },
+      "Award": "Award",
+      "AwardTitle": "Award a Trait",
+      "AwardHint": "The GM may award a Trait after a major story moment: a new open Trait, free (up to six).",
+      "AwardWhat": "The Trait",
+      "AwardPlaceholder": "Walked Out of the Quiet Dock",
+      "Awarded": "Awarded a Trait: {trait}"
     },
     "Grade": {
       "Label": "Grade",
@@ -406,7 +434,13 @@
       "personalPrompt": "a flaw (Can't Leave a Machine Unfixed)",
       "circumstantial": "Circumstantial",
       "circumstantialHint": "An obligation or situation.",
-      "circumstantialPrompt": "an obligation or situation (Censured Once, Watched Ever Since)"
+      "circumstantialPrompt": "an obligation or situation (Censured Once, Watched Ever Since)",
+      "Resolve": "Resolve",
+      "ResolveButtonHint": "The story has resolved this Hindrance: it becomes a Trait, and you write a new Hindrance.",
+      "ResolveTitle": "Resolve a Hindrance",
+      "ResolveHint": "\"{old}\" becomes one of your Traits (free). Write the Hindrance that takes its place.",
+      "ResolveNew": "The new Hindrance",
+      "Resolved": "Resolved a Hindrance: \"{old}\" became a Trait. New Hindrance: {now}."
     },
     "Gift": {
       "Heading": "Gift and Drawback",
@@ -678,6 +712,30 @@
         "contribute": "contributes cleanly",
         "price": "contributes, but takes a Minor Notice",
         "slip": "takes a Major, or the thing they were protecting slips"
+      }
+    },
+    "Consequence": {
+      "title": {
+        "act": "Acting against them",
+        "resist": "Resisting",
+        "record": "Request for Record"
+      },
+      "act": {
+        "commended": "They take a Major Notice.",
+        "approved": "They take a Minor Notice.",
+        "conditions": "They take a Minor Notice, but you take one too, or lose position.",
+        "denied": "You take a Minor Notice, or they gain the upper hand."
+      },
+      "resist": {
+        "commended": "No harm, and you can turn it around.",
+        "approved": "No harm.",
+        "conditions": "You take a Minor Notice.",
+        "denied": "You take a Major Notice, and the GM tells their triumph in full."
+      },
+      "record": {
+        "none": "Chorus answers none of your questions.",
+        "one": "Chorus answers one question: true, exact and literal.",
+        "many": "Chorus answers {n} questions: true, exact and literal."
       }
     }
   }

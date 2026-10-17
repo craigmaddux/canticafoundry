@@ -576,6 +576,7 @@
 .trait.open input { font-style: italic; }
 .trait.open input::placeholder, .trait input::placeholder { color: var(--ink-faint); font-style: italic; }
 .trait.enc label { color: var(--warn); }
+.trait.enc label .resolve { float: right; font-size: 0.55rem; height: auto; letter-spacing: 0.1em; line-height: 1.2; padding: 0.05rem 0.4rem; }
 .trait.enc input { border-color: var(--rule-bright); }
 
 /* skill budget and locked pips */
@@ -797,6 +798,8 @@
 .cantica-card .die.added { outline: 1px dashed var(--ink-dim); outline-offset: 2px; }
 .cantica-card .die.refiled { outline: 1px dotted var(--warm); outline-offset: 2px; }
 .cantica-card .margin.card-action { border-top-color: var(--rule-bright); }
+.cantica-card .margin.consequence strong { color: var(--ink-bright); }
+.cantica-card .margin.consequence span { color: var(--ink); }
 .cantica-card .margin.card-action strong { color: var(--warm-bright); }
 .cantica-card .margin.card-action.raise strong { color: var(--warn); }
 .cantica-card .card-actions button { padding: 0.25rem 0.7rem; }

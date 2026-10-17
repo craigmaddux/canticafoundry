@@ -1,6 +1,7 @@
 import { SYSTEM_ID } from "./config.mjs";
 import { pickCard, newTrait } from "./scene.mjs";
 import { refreshScrutinyTracker } from "./scrutiny.mjs";
+import { serial } from "./serial.mjs";
 
 const { DialogV2 } = foundry.applications.api;
 const SOCKET = `system.${SYSTEM_ID}`;
@@ -121,16 +122,22 @@ export async function amendScene(card) {
   });
   if (!trait?.name) return;
 
-  game.socket.emit(SOCKET, {
+  const request = {
     action: "addTrait",
     cardId: card.id,
     actorId: actor.id,
     userId: game.user.id,
     name: trait.name,
     note: trait.note
-  });
+  };
+  // A socket message never comes back to its sender, so the active GM handles their own request here.
+  if (game.user.isActiveGM) await amendQueue(() => onAddTraitRequest(request));
+  else game.socket.emit(SOCKET, request);
   ui.notifications.info(i18n.format("CANTICA.Card.AmendSent", { name: trait.name }));
 }
+
+/** Requests are handled one at a time, so two Amendments at once can't overwrite each other's Trait. */
+const amendQueue = serial();
 
 /** GM side of Amend the Scene: verify the request, spend the Stamp, add the Trait, announce it. */
 async function onAddTraitRequest(data) {
@@ -174,5 +181,5 @@ export function registerCards() {
 
 /** Listen for players asking the GM to add a Trait (after spending a Stamp). */
 export function listenForCards() {
-  game.socket.on(SOCKET, onAddTraitRequest);
+  game.socket.on(SOCKET, data => { if (data?.action === "addTrait") amendQueue(() => onAddTraitRequest(data)); });
 }

@@ -6,6 +6,7 @@ import { getHum, addHum } from "../hum-tracker.mjs";
 import { widensDissonance, humFromRoll } from "../hum.mjs";
 import { sceneTraitDice } from "../scene.mjs";
 import { cardView } from "../roll-card.mjs";
+import { ROLL_MODES } from "../consequence.mjs";
 
 /** Dice So Nice colorset names (flavors), registered in dsn.mjs. */
 export const COLORSETS = {
@@ -45,7 +46,7 @@ export async function rollExtraDie() {
   for (const term of roll.dice) term.options.appearance = { colorset: term.options.flavor };
   await roll.evaluate();
   // Dice So Nice is optional.
-  try { game.dice3d?.showForRoll(roll, game.user, true); } catch (error) { console.warn(error); }
+  Promise.resolve(game.dice3d?.showForRoll(roll, game.user, true)).catch(error => console.warn(error));
   return roll.total;
 }
 
@@ -65,6 +66,7 @@ export async function rollExtraDie() {
  * @param {boolean} [input.noticeOnTarget]  A Notice on the target NPC, used against them: +1 die.
  * @param {boolean} [input.initiative]      A turn-order roll: the Margin's Grace and Error don't count.
  * @param {boolean} [input.expedite]        Spend a Stamp before the roll for +1 die (one per roll).
+ * @param {string} [input.mode]             plain | act | resist | record (see consequence.mjs): the card says what the result means.
  * @param {number} [input.bound]            Bound gear in play (0 or 1): turns one white die violet.
  * @param {string} [input.boundName]        Which of the character's Bound gear it is (shown on the card).
  * @param {string} [input.sceneId]          The Scene Card the roll happens in.
@@ -178,6 +180,7 @@ export async function rollPool(actor, input) {
 
   const state = {
     turnOrder: Boolean(input.initiative),
+    mode: ROLL_MODES.includes(input.mode) ? input.mode : "plain",
     actorId: actor.id,
     targetName: input.targetName || "",
     extra: [],
@@ -217,7 +220,10 @@ export async function rollPool(actor, input) {
     sound: CONFIG.sounds.dice,
     flags: { [SYSTEM_ID]: { actorId: actor.id, grace: outcome.grace, stampClaimed: false, state } }
   };
-  ChatMessage.applyRollMode(data, game.settings.get("core", "rollMode"));
+  // The chat's roll mode (public, GM only, blind, self). Kept safe in case a Foundry version renames the setting.
+  let rollMode = null;
+  try { rollMode = game.settings.get("core", "rollMode"); } catch { /* use the default */ }
+  if (rollMode && typeof ChatMessage.applyRollMode === "function") ChatMessage.applyRollMode(data, rollMode);
   const message = await ChatMessage.create(data);
 
   // Stamps: Expedite spends one; a Hindrance biting earns one. Settle them in a single update.

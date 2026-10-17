@@ -47,7 +47,7 @@ export async function takeNotice(event, target) {
   const actor = this.actor;
   const tier = tierOf(actor);
   const incoming = target.dataset.kind;
-  const track = actor.toObject().system.notices;
+  let track = actor.toObject().system.notices;
 
   // A character with a Stamp may Reclassify as the Notice lands.
   const canReclassify = actor.type === "character" && actor.system.stamps > 0;
@@ -75,6 +75,8 @@ export async function takeNotice(event, target) {
   });
   if (!notice) return;
 
+  // The track may have changed while the dialog was open (the GM landed a Notice, say): work from it as it is now.
+  track = actor.toObject().system.notices;
   const ChatMessage = CONFIG.ChatMessage.documentClass;
   const reclassified = canReclassify && notice.reclassify;
   const kind = reclassified ? reclassify(incoming) : incoming;

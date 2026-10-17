@@ -1,6 +1,6 @@
 import { SYSTEM_ID, SKILLS, OPEN_TRAITS, CARD_TOKEN } from "../config.mjs";
 import { escapeHtml } from "../lore-text.mjs";
-import { skillChange, traitSlotPurchase, traitRankUp, awardTenure, stampsPerSession, TRAIT_COST } from "../progression.mjs";
+import { skillChange, traitSlotPurchase, traitRankUp, awardTenure, stampsPerSession, TRAIT_COST, TRAIT_MAX } from "../progression.mjs";
 
 export default class CanticaActor extends foundry.documents.Actor {
   /** Scene Cards are drawn onto the tabletop: a big, neutral, linked token that everyone can see. */
@@ -85,6 +85,11 @@ export default class CanticaActor extends foundry.documents.Actor {
    */
   async giveStamp(to) {
     if (!to || to.type !== "character" || to.id === this.id || this.system.stamps < 1) return false;
+    // The ally's Stamp is added by whoever may edit them; if that's the GM, a GM has to be here first.
+    if (!to.isOwner && !game.users.activeGM) {
+      ui.notifications.warn(game.i18n.localize("CANTICA.Card.NoGM"));
+      return false;
+    }
     await this.adjustStamps(-1);
     if (to.isOwner) await to.adjustStamps(1);
     else game.socket.emit(`system.${SYSTEM_ID}`, { action: "give-stamp", toId: to.id });
@@ -167,6 +172,39 @@ export default class CanticaActor extends foundry.documents.Actor {
       await this.update(update);
     }
     return result;
+  }
+
+  /**
+   * Award a Trait, free (the GM, after a major story moment): another open Trait slot, up to six, with no Tenure spent.
+   * @param {string} [text]  The Trait, if it is already known.
+   */
+  async awardTrait(text = "") {
+    const { traitSlots, traits } = this.system;
+    const empty = OPEN_TRAITS.slice(0, traitSlots).find(key => !traits[key]);
+    if (!empty && traitSlots >= TRAIT_MAX) {
+      ui.notifications.warn(game.i18n.localize("CANTICA.Traits.Deny.max"));
+      return null;
+    }
+    const key = empty ?? OPEN_TRAITS[traitSlots];
+    const update = { [`system.traits.${key}`]: text };
+    if (!empty) update["system.traitSlots"] = traitSlots + 1;
+    await this.#log([this.#entry({ kind: "note", reason: game.i18n.format("CANTICA.Traits.Awarded", { trait: text || "—" }) })], update);
+    return key;
+  }
+
+  /**
+   * The story resolves a Hindrance: it becomes a Trait (free), and the player writes a new Hindrance.
+   * @param {"personal"|"circumstantial"} which
+   * @param {string} replacement  The new Hindrance.
+   */
+  async resolveHindrance(which, replacement = "") {
+    const old = this.system.encumbrances[which];
+    if (!old) return null;
+    const key = await this.awardTrait(old);
+    if (!key) return null;
+    await this.update({ [`system.encumbrances.${which}`]: replacement });
+    await this.logNote(game.i18n.format("CANTICA.Encumbrance.Resolved", { old, trait: old, now: replacement || "—" }));
+    return key;
   }
 
   /** Buy another open Trait slot: 4 Tenure, up to six. */

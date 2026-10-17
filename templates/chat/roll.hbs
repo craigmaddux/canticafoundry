@@ -24,6 +24,12 @@
   </div>
 
   {{#unless turnOrder}}<div class="verdict">{{tierLabel}}</div>{{/unless}}
+  {{#if consequence}}
+  <div class="margin consequence">
+    <strong>{{consequenceTitle}}</strong>
+    <span>{{consequence}}</span>
+  </div>
+  {{/if}}
 
   {{#each actions}}
   <div class="margin card-action {{kind}}">

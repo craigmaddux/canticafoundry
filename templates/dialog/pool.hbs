@@ -24,6 +24,13 @@
     </select>
   </div>
 
+  <div class="field">
+    <label for="pool-mode">{{localize "CANTICA.Pool.Mode"}}</label>
+    <select id="pool-mode" name="mode">
+      {{#each modes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+    </select>
+  </div>
+
   <fieldset>
     <legend>{{localize "CANTICA.Pool.Traits"}}</legend>
     {{#if hasTraits}}

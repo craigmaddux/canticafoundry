@@ -1,5 +1,6 @@
 import { reduceSuccesses, tierFor } from "./rules.mjs";
 import { canRefile, canRaise } from "./card-actions.mjs";
+import { consequence } from "./consequence.mjs";
 
 /**
  * The chat card for a roll, as a function of its saved state. Pure, no Foundry dependency (the
@@ -79,6 +80,14 @@ export function cardView(state, t) {
     // "3 → 2" so everyone can see what the Complication took.
     wasSuccesses: reduced ? adjusted.successes : null,
     tierLabel: t(`CANTICA.Tier.${shown.tier}`),
+    // What the result means, for a roll against someone, a hazard, or a Request for Record.
+    ...(() => {
+      const c = state.turnOrder ? null : consequence(state.mode ?? "plain", shown.tier, shown.successes);
+      return {
+        consequence: c ? t(`CANTICA.Consequence.${c.key}`, c.data) : "",
+        consequenceTitle: c ? t(`CANTICA.Consequence.title.${state.mode}`) : ""
+      };
+    })(),
     // Cards saved before v0.8 call it Resonance.
     dissonanceLabel: state.dissonanceLabel || state.resonanceLabel || "",
     stampNote: state.stampNote,
