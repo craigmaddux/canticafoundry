@@ -793,7 +793,7 @@
 .cantica-card .margin.complication.negated strong { color: var(--ink-dim); text-decoration: line-through; }
 .cantica-card .margin.complication.negated span { color: var(--ink-dim); }
 .cantica-card .card-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.cantica-card .card-actions[hidden] { display: none; }
+.cantica-card .card-actions[hidden], .cantica-card .card-actions button[hidden] { display: none; }
 .cantica-card .die.added { outline: 1px dashed var(--ink-dim); outline-offset: 2px; }
 .cantica-card .die.refiled { outline: 1px dotted var(--warm); outline-offset: 2px; }
 .cantica-card .margin.card-action { border-top-color: var(--rule-bright); }

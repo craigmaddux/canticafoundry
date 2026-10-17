@@ -190,8 +190,11 @@ function queue(token, delay = 1200) {
   timers.set(token.uuid, setTimeout(() => { timers.delete(token.uuid); paintToken(token); }, delay));
 }
 
-/** Every token of a card, on every scene. */
-const tokensOf = actor => game.scenes.flatMap(scene => scene.tokens.filter(token => token.actorId === actor.id));
+/**
+ * Every token of a card, on every scene. (Foundry's collections have no flatMap, so this goes through their
+ * arrays: calling flatMap on game.scenes threw, and so no edit to a card ever repainted its token.)
+ */
+export const tokensOf = actor => game.scenes.contents.flatMap(scene => scene.tokens.contents.filter(token => token.actorId === actor.id));
 
 /** Repaint every card token in the scene being viewed. */
 export function repaintCards({ force = true } = {}) {
@@ -254,7 +257,9 @@ export function registerCardArt() {
     if (actor.type !== "card") return;
     const system = changes.system ?? {};
     if (!("name" in changes || "img" in changes || "description" in system || "traits" in system || "docket" in system)) return;
-    for (const token of tokensOf(actor)) queue(token);
+    try {
+      for (const token of tokensOf(actor)) queue(token);
+    } catch (error) { warn(error); }
   });
 
   // Cards placed before this existed, or while no GM was around, are painted when the scene opens.
