@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { wrap, clampLines, layoutCard, cardHash, imageSize, coverCrop, PLATE_START, plateStartFor } from "../module/card-layout.mjs";
+import { wrap, clampLines, layoutCard, cardHash, imageSize, coverCrop, PLATE_START, plateStartFor, MIN_TRAITS } from "../module/card-layout.mjs";
 
 // A stand-in for measuring text: every character is half the font size wide.
 const measure = (text, font) => text.length * (parseFloat(font.match(/(\d+(?:\.\d+)?)px/)?.[1]) * 0.5);
@@ -64,17 +64,60 @@ test("the card has a plate, the name, a clamped place, and its Traits", () => {
   assert.ok(lines.includes("Engine Room"));
   assert.ok(lines.includes("TRAITS"));
   assert.ok(lines.some(l => l.startsWith("◆ Steam Everywhere")));
-  assert.equal(layout.plateTop, Math.round(800 * PLATE_START));
+  // with art and room to spare, the plate starts where it always has
+  assert.equal(layoutCard(card({ traits: ["Steam Everywhere", "Crowded"] }), measure).plateTop, Math.round(800 * PLATE_START));
   // the place is at most two lines
   assert.ok(texts(layout).filter(op => op.font.startsWith("italic") && !op.text.startsWith("+")).length <= 2);
 });
 
 test("nothing is drawn below the card, and what doesn't fit is counted", () => {
-  const layout = layoutCard(card({ width: 400, height: 400 }), measure);
+  const many = Array.from({ length: 16 }, (_, i) => `A Rather Long Trait Number ${i + 1}`);
+  const layout = layoutCard(card({ traits: many, width: 400, height: 400 }), measure);
   for (const op of texts(layout)) assert.ok(op.y <= 400, `${op.text} at ${op.y}`);
-  assert.equal(layout.shown + layout.more, 6);
+  assert.equal(layout.shown + layout.more, 16);
   assert.ok(layout.more > 0, "some Traits don't fit on a small card");
   assert.ok(texts(layout).some(op => op.text === `+ ${layout.more} more`));
+});
+
+test("at least four Traits always show, on every token shape, with art or without", () => {
+  const six = card().traits;
+  for (const [sw, sh] of [[12, 9], [4, 3], [4, 4], [3, 5], [6, 2], [2, 2], [10, 6]]) {
+    const { width, height } = imageSize(sw, sh);
+    for (const art of [true, false]) {
+      const layout = layoutCard(card({ width, height, art, name: "The crawlway behind the bulkhead" }), measure);
+      assert.ok(layout.shown >= MIN_TRAITS, `${sw}x${sh} art=${art}: only ${layout.shown} Traits`);
+      for (const op of texts(layout)) {
+        const px = parseFloat(op.font.match(/(\d+(?:\.\d+)?)px/)[1]);
+        assert.ok(op.y + px <= height, `${sw}x${sh} art=${art}: "${op.text}" runs off the bottom`);
+        assert.ok(op.x + measure(op.text, op.font) <= width + 1, `${sw}x${sh} art=${art}: "${op.text}" runs off the side`);
+      }
+    }
+  }
+  // fewer than four: all of them
+  assert.equal(layoutCard(card({ traits: six.slice(0, 2), width: 1600, height: 1200, art: false }), measure).shown, 2);
+});
+
+test("with no art the plate is the whole card; a wide card uses two columns only when one won't do", () => {
+  const few = layoutCard(card({ traits: ["Dark and Tight", "You Can Hear It Breathing"], width: 1600, height: 1200, art: false }), measure);
+  assert.equal(few.plateTop, 0);
+  assert.equal(few.columns, 1);
+  const many = Array.from({ length: 10 }, (_, i) => `Trait Number ${i + 1}`);
+  const busy = layoutCard(card({ traits: many, width: 1600, height: 1200, art: false }), measure);
+  assert.equal(busy.columns, 2);
+  const xs = new Set(texts(busy).filter(op => op.text.startsWith("◆ ") && op.text !== "◆ SCENE").map(op => op.x));
+  assert.equal(xs.size, 2);
+  assert.equal(layoutCard(card({ traits: many, width: 600, height: 1000 }), measure).columns, 1);
+});
+
+test("'+ N more' sits on its own line, below the last Trait and never over the heading", () => {
+  const many = Array.from({ length: 30 }, (_, i) => `A Rather Long Trait Number ${i + 1}`);
+  const layout = layoutCard(card({ traits: many, width: 800, height: 600, art: false }), measure);
+  assert.ok(layout.more > 0);
+  const more = texts(layout).find(op => op.text.startsWith("+ "));
+  const header = texts(layout).find(op => op.text === "TRAITS");
+  const lastTrait = texts(layout).filter(op => op.y > header.y && op.text !== "TRAITS" && !op.text.startsWith("+ ")).reduce((a, b) => (b.y > a.y ? b : a));
+  assert.ok(more.y > header.y, "below the heading");
+  assert.ok(more.y > lastTrait.y, "below the last Trait");
 });
 
 test("a roomy card shows every Trait and no 'more'", () => {

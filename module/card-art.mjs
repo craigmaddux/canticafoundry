@@ -1,5 +1,5 @@
 import { SYSTEM_ID, CARD_TOKEN, OLD_CARD_TOKEN } from "./config.mjs";
-import { layoutCard, cardHash, imageSize, coverCrop, COLOR } from "./card-layout.mjs";
+import { layoutCard, cardHash, imageSize, coverCrop, COLOR, LAYOUT_VERSION } from "./card-layout.mjs";
 
 /**
  * The card on the tabletop. The whole card (art cropped to the token's shape, the fade, the name, the
@@ -63,7 +63,7 @@ export async function renderCardImage({ name, description, traits, tally, art },
   }
 
   const measure = (text, font) => { ctx.font = font; return ctx.measureText(text).width; };
-  const { ops } = layoutCard({ name, description, traits, tally, width, height }, measure);
+  const { ops } = layoutCard({ name, description, traits, tally, width, height, art: Boolean(art) }, measure);
 
   ctx.textBaseline = "top";
   for (const op of ops) {
@@ -116,7 +116,8 @@ function describe(token) {
     tally: actor.system.docket.open ? actor.system.docket.successes : null,
     art: hasArt(actor.img) ? actor.img : null
   };
-  return { data, width, height, hash: cardHash([data, width, height]) };
+  // The layout's version is part of the hash, so a new layout repaints every card on the table.
+  return { data, width, height, hash: cardHash([data, width, height, LAYOUT_VERSION]) };
 }
 
 /**
