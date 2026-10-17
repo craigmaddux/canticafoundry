@@ -13,7 +13,7 @@ import CharacterSheet from "./module/apps/character-sheet.mjs";
 import NpcSheet from "./module/apps/npc-sheet.mjs";
 import CardSheet from "./module/apps/card-sheet.mjs";
 import PoolDialog from "./module/apps/pool-dialog.mjs";
-import { rollPool } from "./module/dice/roll.mjs";
+import { rollPool, rollTurnOrder } from "./module/dice/roll.mjs";
 import { registerDiceColors } from "./module/dice/dsn.mjs";
 import { onRenderChatMessage, listenForRollChanges } from "./module/chat.mjs";
 import Ledger from "./module/apps/ledger.mjs";
@@ -85,7 +85,7 @@ Hooks.once("init", () => {
   });
 
   // Handy for macros: game.cantica.rollPool(actor, { skill: "hullcraft" }) or new game.cantica.PoolDialog({ actor }).
-  game.cantica = { rules, notices, rollPool, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, importScenario, openPanel, setShown, repaintCards, resizeCards, register: openRegistration };
+  game.cantica = { rules, notices, rollPool, rollTurnOrder, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, importScenario, openPanel, setShown, repaintCards, resizeCards, register: openRegistration };
 
   return foundry.applications.handlebars.loadTemplates([
     `systems/${SYSTEM_ID}/templates/actor/character.hbs`,

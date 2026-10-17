@@ -15,7 +15,9 @@
       "ChangePortrait": "Change portrait",
       "Traits": "Traits",
       "Skills": "Skills",
-      "Notes": "Notes"
+      "Notes": "Notes",
+      "TurnOrder": "Turn order",
+      "TurnOrderHint": "Roll Notice for the order of play: everyone rolls, the most successes goes first. The Margin's Grace and Error don't count."
     },
     "Character": {
       "touched": {
@@ -263,9 +265,6 @@
       "HelpNote": "Others are assisting: +1 die in total, however many help.",
       "NoticeOnTarget": "A Notice on the target",
       "NoticeOnTargetNote": "You are using a Notice an NPC carries against them: +1 die.",
-      "TurnOrder": "Turn order roll",
-      "TurnOrderHint": "Everyone rolls Notice; the most successes goes first. The Margin's Grace and Error don't count.",
-      "TurnOrderNote": "Turn order: the Margin's Grace and Error don't count.",
       "NoBoundGear": "None in play"
     },
     "Roll": {
@@ -302,7 +301,8 @@
       "Expedite": "Expedite (Stamp)",
       "Help": "+1 Help",
       "NoticeOnTarget": "+1 Notice on the target",
-      "TurnOrderNote": "Turn order roll: the Margin's Grace and Error don't count."
+      "TurnOrderNote": "Turn order roll: the Margin's Grace and Error don't count.",
+      "SuccessesOnly": "successes (turn order)"
     },
     "Tier": {
       "denied": "Denied",

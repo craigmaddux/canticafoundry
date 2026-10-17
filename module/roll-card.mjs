@@ -90,10 +90,12 @@ export function cardView(state, t) {
       }
       : null,
     // The buttons are always in the card; the chat hook shows them only to the right people.
-    canComplicate: Boolean(state.sceneId) && !c,
+    canComplicate: Boolean(state.sceneId) && !c && !state.turnOrder,
     canNegate: reduced,
+    // A turn-order roll is just a count of successes: no verdict, and nothing to do to it afterwards.
+    turnOrder: Boolean(state.turnOrder),
     // Whether each action is still open on this roll. The chat hook shows each button only to the people it is for.
-    canRefile: canRefile(state),
-    canRaise: canRaise(state)
+    canRefile: canRefile(state) && !state.turnOrder,
+    canRaise: canRaise(state) && !state.turnOrder
   };
 }

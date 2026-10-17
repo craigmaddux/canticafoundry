@@ -28,6 +28,15 @@ export async function renderRollCard(state) {
 }
 
 /**
+ * Turn order: everyone rolls Notice, and the most successes goes first. A quick roll with no builder: the Margin and
+ * Notice, and the Margin's Grace and Error don't count (no Scrutiny, no Stamp, no twist). The card shows the
+ * successes and nothing to win or lose.
+ */
+export function rollTurnOrder(actor) {
+  return rollPool(actor, { skill: "notice", difficulty: 0, initiative: true });
+}
+
+/**
  * Roll one more white die, for a Stamp spent from the chat card after the roll.
  * @returns {Promise<number>} the d10 result
  */
@@ -168,6 +177,7 @@ export async function rollPool(actor, input) {
     .filter(Boolean);
 
   const state = {
+    turnOrder: Boolean(input.initiative),
     actorId: actor.id,
     targetName: input.targetName || "",
     extra: [],

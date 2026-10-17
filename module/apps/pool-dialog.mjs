@@ -206,7 +206,6 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
       expedite: Boolean(form.elements.expedite?.checked),
       help: Boolean(form.elements.help?.checked),
       noticeOnTarget: Boolean(form.elements.noticeOnTarget?.checked),
-      initiative: Boolean(form.elements.initiative?.checked),
       sceneId,
       sceneName: sceneId ? form.elements.sceneCard.selectedOptions[0].textContent.trim() : "",
       sceneTrait,
@@ -244,19 +243,13 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
         : pool.floored ? i18n.localize("CANTICA.Roll.Floored")
           : input.gift ? i18n.localize(`CANTICA.Roll.GiftEffect.${pool.giftEffect || "none"}`) : "";
 
-    // A turn-order roll: the Margin's Grace and Error don't count.
-    const turn = input.initiative;
-    if (turn) el.querySelector("[data-error-range]").textContent = i18n.localize("CANTICA.Pool.TurnOrderNote");
-
     // Any Hindrance (or the Drawback) in play is Greater Bound: the Margin of Error widens to 1-2,
     // and so does Dissonance on any violet dice.
     const widened = input.encumbranceKeys.length > 0;
     const range = widened ? "1–2" : "1";
-    if (!turn) {
-      el.querySelector("[data-error-range]").textContent = pool.violet > 0
-        ? i18n.format("CANTICA.Pool.ErrorAndDissonanceRange", { range })
-        : i18n.format("CANTICA.Pool.ErrorRange", { range });
-    }
+    el.querySelector("[data-error-range]").textContent = pool.violet > 0
+      ? i18n.format("CANTICA.Pool.ErrorAndDissonanceRange", { range })
+      : i18n.format("CANTICA.Pool.ErrorRange", { range });
   }
 
   static async #onSubmit(event, form, formData) {

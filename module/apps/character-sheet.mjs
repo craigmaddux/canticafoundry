@@ -2,6 +2,7 @@ import { SYSTEM_ID, SKILL_GROUPS, SKILL_MAX, OPEN_TRAITS } from "../config.mjs";
 import { RULE_BREAKS } from "../rules.mjs";
 import { CREATION_BUDGET, CREATION_MAX, TRAIT_MAX, TRAIT_COST, TRAIT_RANK_COST, TRAIT_RANK_GRADE } from "../progression.mjs";
 import PoolDialog from "./pool-dialog.mjs";
+import { rollTurnOrder } from "../dice/roll.mjs";
 import { findBrief, commendationSuggestion } from "../briefs.mjs";
 import { escapeHtml } from "../lore-text.mjs";
 import { openRegistration, holds, focusRegistration } from "./registration.mjs";
@@ -33,6 +34,7 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       adjustStamps: CharacterSheet.#onAdjustStamps,
       startSession: CharacterSheet.#onStartSession,
       citeClause: CharacterSheet.#onCiteClause,
+      turnOrder: CharacterSheet.#onTurnOrder,
       countersign: CharacterSheet.#onCountersign,
       addCommendation: CharacterSheet.#onAddCommendation,
       takeBriefCommendation: CharacterSheet.#onTakeBriefCommendation,
@@ -267,6 +269,11 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
   static async #onStartSession() {
     const perSession = await this.actor.startSession();
     ui.notifications.info(game.i18n.format("CANTICA.Stamps.SessionStarted", { n: perSession }));
+  }
+
+  /** Turn order: roll Notice for the order of play (the Margin's Grace and Error don't count). */
+  static #onTurnOrder() {
+    return rollTurnOrder(this.actor);
   }
 
   /** Countersign: give one of your Stamps to another character, to use as their Expedite or Refile. */

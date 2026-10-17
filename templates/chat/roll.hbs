@@ -20,10 +20,10 @@
   <div class="tally">
     {{#if wasSuccesses}}<span class="was">{{wasSuccesses}}</span><span class="arrow">→</span>{{/if}}
     <span class="successes">{{successes}}</span>
-    <span class="vs">{{localize "CANTICA.Roll.SuccessesVs"}} {{difficulty}}</span>
+    {{#unless turnOrder}}<span class="vs">{{localize "CANTICA.Roll.SuccessesVs"}} {{difficulty}}</span>{{else}}<span class="vs">{{localize "CANTICA.Roll.SuccessesOnly"}}</span>{{/unless}}
   </div>
 
-  <div class="verdict">{{tierLabel}}</div>
+  {{#unless turnOrder}}<div class="verdict">{{tierLabel}}</div>{{/unless}}
 
   {{#each actions}}
   <div class="margin card-action {{kind}}">

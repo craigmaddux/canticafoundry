@@ -321,6 +321,22 @@
 .preview-note { color: var(--warn); font-family: var(--font-mono); font-size: 0.65rem; }
 
 .pool-dialog footer { display: flex; justify-content: flex-end; }
+
+/* The builder is long: it never grows taller than the screen, it scrolls, and the pool and Roll button stay in view. */
+.application.pool-dialog { max-height: 94vh; }
+.application.pool-dialog .window-content { min-height: 0; overflow-y: auto; }
+.pool-dialog .pool-foot {
+  background: var(--hull);
+  border-top: 1px solid var(--rule-bright);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0 -1.1rem -1.1rem;
+  padding: 0.7rem 1.1rem 1rem;
+  position: sticky;
+  z-index: 5;
+}
 .pool-dialog footer button { background: var(--warm-deep); border-color: var(--warm); color: var(--void); font-weight: 700; padding: 0.45rem 1.4rem; }
 .pool-dialog footer button:hover:not(:disabled) { background: var(--warm); color: var(--void); }
 
@@ -934,3 +950,6 @@
 .proceedings-results button { height: auto; line-height: 1.2; margin-left: auto; padding: 0.1rem 0.4rem; }
 .docket-board.docket-won { border-color: var(--bound); }
 .docket-board.docket-lost { border-color: var(--warn); }
+
+/* Foundry gives buttons a fixed height; the Roll button holds padded text. */
+.pool-dialog footer button { height: auto; line-height: 1.3; }

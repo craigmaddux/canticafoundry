@@ -133,7 +133,9 @@
       </div>
 
       <section class="panel skills record-skills">
-        <h2>{{localize "CANTICA.Sheet.Skills"}}</h2>
+        <h2>{{localize "CANTICA.Sheet.Skills"}}
+          <button type="button" class="add" data-action="turnOrder" title="{{localize 'CANTICA.Sheet.TurnOrderHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Sheet.TurnOrder"}}</button>
+        </h2>
         {{#if creation.on}}
         <div class="skill-budget {{#if creation.over}}over{{/if}}" title="{{localize 'CANTICA.Creation.Hint'}}">
           <span>{{localize "CANTICA.Creation.Label"}}: <strong>{{creation.spent}} / {{creation.budget}}</strong> {{localize "CANTICA.Creation.Tenure"}} · {{localize "CANTICA.Creation.Max"}} {{creation.max}}</span>
