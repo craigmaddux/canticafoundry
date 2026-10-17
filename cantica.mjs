@@ -19,7 +19,6 @@ import { onRenderChatMessage, listenForRollChanges } from "./module/chat.mjs";
 import Ledger from "./module/apps/ledger.mjs";
 import { registerCardArt, repaintCards, resizeCards } from "./module/card-art.mjs";
 import { openRegistration, hold, release, holds } from "./module/apps/registration.mjs";
-import { registerPanels, reconcilePanels, openPanel, setShown } from "./module/scene-panel.mjs";
 import { initLore, importLore } from "./module/lore.mjs";
 import { importScenario } from "./module/scenario.mjs";
 import { registerCards, listenForCards, activeCard, detectCard, setActiveCard } from "./module/cards.mjs";
@@ -60,7 +59,6 @@ Hooks.once("init", () => {
   registerHum();
   registerCards();
   registerCardArt();
-  registerPanels();
 
   // Register With Gloss opens by itself for a brand-new character, unless the player turns that off.
   game.settings.register(SYSTEM_ID, "autoRegister", {
@@ -86,7 +84,7 @@ Hooks.once("init", () => {
   });
 
   // Handy for macros: game.cantica.rollPool(actor, { skill: "hullcraft" }) or new game.cantica.PoolDialog({ actor }).
-  game.cantica = { rules, notices, rollPool, rollTurnOrder, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, importScenario, openPanel, setShown, repaintCards, resizeCards, register: openRegistration };
+  game.cantica = { rules, notices, rollPool, rollTurnOrder, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, importScenario, repaintCards, resizeCards, register: openRegistration };
 
   return foundry.applications.handlebars.loadTemplates([
     `systems/${SYSTEM_ID}/templates/actor/character.hbs`,
@@ -101,8 +99,7 @@ Hooks.once("init", () => {
     `systems/${SYSTEM_ID}/templates/chat/amend.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/grade.hbs`,
     `systems/${SYSTEM_ID}/templates/chat/lore.hbs`,
-    `systems/${SYSTEM_ID}/templates/app/ledger.hbs`,
-    `systems/${SYSTEM_ID}/templates/app/panel.hbs`
+    `systems/${SYSTEM_ID}/templates/app/ledger.hbs`
   ]);
 });
 
@@ -111,7 +108,6 @@ Hooks.once("ready", () => {
   listenForHum();
   listenForRollChanges();
   listenForCards();
-  reconcilePanels();
   if (game.settings.get(SYSTEM_ID, "showScrutiny")) showScrutiny();
   showHum(); // does nothing unless you are the GM
   announceSkillMoves(); // the active GM only

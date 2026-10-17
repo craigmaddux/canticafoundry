@@ -23,7 +23,7 @@ export default class CardData extends foundry.abstract.TypeDataModel {
       links: new StringField({ required: true, blank: true, initial: "" }),
 
       // A Docket in this scene: a job against a Deadline (see docket.mjs). Only the GM sees it; the table sees
-      // only the running tally of successes, on the card's token and panel.
+      // only the running tally of successes, on the card's token.
       docket: new SchemaField({
         open: new BooleanField({ initial: false }),
         name: new StringField({ required: true, blank: true, initial: "" }),

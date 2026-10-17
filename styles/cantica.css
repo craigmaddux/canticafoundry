@@ -769,23 +769,6 @@
 /* creation buttons beside the skill budget */
 .creation-buttons { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; }
 
-/* ── the scene panel: the card, on everyone's screen ── */
-.scene-panel .window-content { background: var(--hull); display: flex; flex-direction: column; padding: 0; }
-.scene-panel-body { display: flex; flex: 1; flex-direction: column; min-height: 0; }
-.scene-panel .card-banner { background: var(--void-deep); border-bottom: 1px solid var(--rule-bright); flex: none; height: 170px; overflow: hidden; position: relative; }
-.scene-panel .banner-art { display: block; height: 100%; object-fit: cover; object-position: center 40%; width: 100%; }
-.scene-panel .banner-overlay {
-  background: linear-gradient(to top, rgba(2, 4, 10, 0.94) 0%, rgba(2, 4, 10, 0.7) 50%, rgba(2, 4, 10, 0) 100%);
-  bottom: 0; left: 0; padding: 2rem 1rem 0.6rem; position: absolute; right: 0;
-}
-.scene-panel .banner-overlay .eyebrow { color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.3em; text-transform: uppercase; }
-.scene-panel .banner-overlay .eyebrow::before { color: var(--warm); content: "◆ "; }
-.scene-panel .banner-overlay .name-static { color: var(--ink-bright); font-size: 1.6rem; line-height: 1.2; text-shadow: 0 1px 8px #000; }
-.scene-panel .panel-body { display: flex; flex: 1; flex-direction: column; gap: 0.7rem; overflow-y: auto; padding: 0.8rem 1rem 1rem; }
-.scene-panel .card-text { color: var(--ink); font-style: italic; margin: 0; }
-.scene-panel .panel-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; }
-.scene-panel .panel-actions button { padding: 0.2rem 0.6rem; }
-
 /* ── the roll card: a Complication and the Negate that answers it ── */
 .cantica-card .tally .was { color: var(--ink-dim); font-family: var(--font-display); font-size: 1.1rem; text-decoration: line-through; }
 .cantica-card .tally .arrow { color: var(--warn); font-family: var(--font-mono); }
@@ -847,7 +830,7 @@
 
 /* Foundry gives buttons a fixed height; these ones hold padded text. */
 .reg-body .answer { box-sizing: border-box; }
-.reg-foot button, .scene-panel .panel-actions button, .cantica-card .card-actions button, .creation-buttons button { height: auto; line-height: 1.3; }
+.reg-foot button, .cantica-card .card-actions button, .creation-buttons button { height: auto; line-height: 1.3; }
 
 /* v0.7: ranked Traits (two pips beside each Trait) and the pick-one Trait list in the roll dialog. */
 .trait-line { align-items: center; display: flex; gap: 0.6rem; }

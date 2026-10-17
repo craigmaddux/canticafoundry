@@ -1,7 +1,6 @@
 import { SYSTEM_ID } from "../config.mjs";
 import { addTrait, setActiveCard, amendScene } from "../cards.mjs";
 import { locationsOf, locationOptions } from "../scene.mjs";
-import { isShown, setShown, openPanel } from "../scene-panel.mjs";
 import { repaintCard } from "../card-art.mjs";
 import * as docket from "../docket.mjs";
 import * as proceedings from "../proceedings.mjs";
@@ -28,8 +27,6 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       setActive: CardSheet.#onSetActive,
       openCard: CardSheet.#onOpenCard,
       amend: CardSheet.#onAmend,
-      toggleTable: CardSheet.#onToggleTable,
-      popOut: CardSheet.#onPopOut,
       repaintToken: CardSheet.#onRepaintToken,
       openDocket: CardSheet.#onOpenDocket,
       closeDocket: CardSheet.#onCloseDocket,
@@ -56,7 +53,6 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     context.system = system;
     context.isGM = isGM;
     context.editable = isGM && this.isEditable;
-    context.shown = isShown(this.actor.id);
 
     // The Docket, for the GM only.
     const d = system.docket;
@@ -216,20 +212,9 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     await this.actor.update({ "system.proceedings": proceedings.remove(this.actor.toObject().system.proceedings, target.dataset.who) });
   }
 
-  /** GM: put this card on everyone's screen, or take it off. */
-  static async #onToggleTable() {
-    await setShown(this.actor.id, !isShown(this.actor.id));
-    this.render();
-  }
-
   /** GM: paint the card's token(s) again from the card as it is now. */
   static async #onRepaintToken() {
     await repaintCard(this.actor);
     ui.notifications.info(game.i18n.localize("CANTICA.Card.Repainted"));
-  }
-
-  /** Open the panel on this screen only. */
-  static #onPopOut() {
-    openPanel(this.actor.id);
   }
 }

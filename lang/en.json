@@ -380,12 +380,6 @@
       "NoTraits": "No Traits yet.",
       "NoCharacter": "You need a character to spend a Stamp. Select your token first.",
       "NoGM": "A GM has to be online to add a Trait.",
-      "ShowOnTable": "Show on everyone's screen",
-      "HideFromTable": "Hide from everyone's screen",
-      "TableHint": "Put this scene on every player's screen as a panel they can move and close.",
-      "PopOut": "Open panel",
-      "PopOutHint": "Open this scene as a panel on your screen only.",
-      "OpenSheet": "Open card",
       "PaintFailed": "Could not paint a scene card for the tabletop. The token will show its plain art. Check that this world's folder can be written to.",
       "Repaint": "Repaint token",
       "RepaintHint": "Paint this card's token on the tabletop again from the card as it is now.",
@@ -657,7 +651,7 @@
     },
     "Docket": {
       "Heading": "Docket",
-      "Hint": "A job that builds up over several rounds, against a Deadline. Only you see this. The table sees just the running count of successes, on the card's token and panel.",
+      "Hint": "A job that builds up over several rounds, against a Deadline. Only you see this. The table sees just the running count of successes, on the card's token.",
       "Open": "Open a Docket",
       "Close": "Close",
       "Job": "The job",
@@ -781,8 +775,7 @@
       "Links": "Links",
       "LinksPlaceholder": "Base (Hazard) · Control",
       "LinksHint": "Where you can go from here. Free unless marked Hazard (crossing takes a roll), Locked (it has to be opened first) or Long (getting there takes your turn).",
-      "Sections": "Sections",
-      "From": "From {name}"
+      "Sections": "Sections"
     },
     "Migration": {
       "Speaker": "Gloss",
