@@ -91,8 +91,7 @@ class ScrutinyTracker extends HandlebarsApplicationMixin(ApplicationV2) {
       adjust: ScrutinyTracker.#onAdjust,
       reset: ScrutinyTracker.#onReset,
       startSession: ScrutinyTracker.#onStartSession,
-      spend: ScrutinyTracker.#onSpend,
-      openLedger: () => game.cantica?.openLedger()
+      spend: ScrutinyTracker.#onSpend
     }
   };
 

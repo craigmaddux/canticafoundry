@@ -2,7 +2,7 @@
   "id": "cantica",
   "title": "Cantica",
   "description": "A native system for Cantica, a generational ark ship run by a tired AI that is also an angel of Order. d10 pools, the amber Margin, violet Bound dice, Scrutiny, and harm that arrives as bureaucratic Notices.",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
@@ -66,6 +66,18 @@
         "TRUSTED": "NONE",
         "ASSISTANT": "OWNER"
       }
+    },
+    {
+      "name": "people-places",
+      "label": "Cantica: People & Places (GM)",
+      "path": "packs/people-places",
+      "type": "Actor",
+      "system": "cantica",
+      "ownership": {
+        "PLAYER": "NONE",
+        "TRUSTED": "NONE",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "packFolders": [
@@ -76,6 +88,7 @@
       "packs": [
         "rules",
         "lore",
+        "people-places",
         "one-shots"
       ]
     }
@@ -95,10 +108,9 @@
   },
   "url": "https://github.com/craigmaddux/canticafoundry",
   "manifest": "https://github.com/craigmaddux/canticafoundry/releases/latest/download/system.json",
-  "download": "https://github.com/craigmaddux/canticafoundry/releases/download/v0.15.3/system.zip",
+  "download": "https://github.com/craigmaddux/canticafoundry/releases/download/v0.15.4/system.zip",
   "socket": true,
   "scripts": [
-    "lore/ledger-data.js",
     "lore/station-briefs-data.js"
   ]
 }

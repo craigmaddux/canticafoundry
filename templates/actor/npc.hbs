@@ -4,6 +4,7 @@
     <div class="identity">
       <div class="eyebrow">{{localize "CANTICA.Npc.Eyebrow"}}</div>
       <input class="name" type="text" name="name" value="{{actor.name}}" placeholder="{{localize 'CANTICA.Sheet.NamePlaceholder'}}" {{#unless editable}}disabled{{/unless}}>
+      {{#if isGM}}<button type="button" class="show-players" data-action="showToPlayers" title="{{localize 'CANTICA.Share.NpcHint'}}"><i class="fa-solid fa-image"></i> {{localize "CANTICA.Share.ShowNpc"}}</button>{{/if}}
     </div>
     <div class="counters">
       <div class="counter" title="{{localize 'CANTICA.Npc.RatingHint'}}">

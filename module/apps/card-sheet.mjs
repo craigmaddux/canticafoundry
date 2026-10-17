@@ -28,6 +28,7 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       openCard: CardSheet.#onOpenCard,
       amend: CardSheet.#onAmend,
       repaintToken: CardSheet.#onRepaintToken,
+      toggleShared: CardSheet.#onToggleShared,
       openDocket: CardSheet.#onOpenDocket,
       closeDocket: CardSheet.#onCloseDocket,
       docketAdjust: CardSheet.#onDocketAdjust,
@@ -88,6 +89,8 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     };
 
     // Keep each Trait's real position: the form fields are named by array index.
+    // Can players open this card? (Imported places start hidden.)
+    context.shared = this.actor.ownership.default >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
     context.traits = system.traits.map((trait, index) => ({ ...trait, index, open: this.#open.has(trait.id) }));
 
     // Locations and Sections: the place this card is part of, and the Sections that are part of it.
@@ -143,6 +146,15 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     const { trait } = target.dataset;
     this.#open.delete(trait);
     await this.actor.update({ "system.traits": this.actor.toObject().system.traits.filter(t => t.id !== trait) });
+  }
+
+  /** GM: let every player open this card (and Amend it), or hide it again. Its token on the map is seen either way. */
+  static async #onToggleShared() {
+    if (!game.user.isGM) return;
+    const { OBSERVER, NONE } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+    const shared = this.actor.ownership.default >= OBSERVER;
+    await this.actor.update({ "ownership.default": shared ? NONE : OBSERVER });
+    ui.notifications.info(game.i18n.format(shared ? "CANTICA.Share.Hidden" : "CANTICA.Share.Shared", { name: this.actor.name }));
   }
 
   /** Open a linked card's sheet: the Location, or one of its Sections. */

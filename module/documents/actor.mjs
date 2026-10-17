@@ -3,7 +3,11 @@ import { escapeHtml } from "../lore-text.mjs";
 import { skillChange, traitSlotPurchase, traitRankUp, awardTenure, stampsPerSession, TRAIT_COST, TRAIT_MAX, GEAR_KEEP_COST } from "../progression.mjs";
 
 export default class CanticaActor extends foundry.documents.Actor {
-  /** Scene Cards are drawn onto the tabletop: a big, neutral, linked token that everyone can see. */
+  /**
+   * Scene Cards are drawn onto the tabletop: a big, neutral, linked token. A card the GM makes is open to everyone; one
+   * that comes from a compendium pack (a one-shot's places, People & Places) starts hidden from players, until the GM
+   * shares it from its sheet.
+   */
   async _preCreate(data, options, user) {
     const allowed = await super._preCreate(data, options, user);
     if (allowed === false) return false;
@@ -16,7 +20,7 @@ export default class CanticaActor extends foundry.documents.Actor {
     if (this.type === "card") {
       const { DOCUMENT_OWNERSHIP_LEVELS, TOKEN_DISPLAY_MODES, TOKEN_DISPOSITIONS } = CONST;
       this.updateSource({
-        "ownership.default": DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
+        "ownership.default": data.flags?.[SYSTEM_ID]?.startHidden ? DOCUMENT_OWNERSHIP_LEVELS.NONE : DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         prototypeToken: {
           actorLink: true,
           width: CARD_TOKEN.width,

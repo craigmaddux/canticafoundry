@@ -13,6 +13,7 @@
         {{#if isGM}}
         <button type="button" data-action="setActive" {{#if system.active}}disabled{{/if}}>{{localize "CANTICA.Card.MakeActive"}}</button>
         <button type="button" data-action="repaintToken" title="{{localize 'CANTICA.Card.RepaintHint'}}">{{localize "CANTICA.Card.Repaint"}}</button>
+        <button type="button" data-action="toggleShared" title="{{localize 'CANTICA.Share.CardHint'}}">{{#if shared}}<i class="fa-solid fa-eye-slash"></i> {{localize "CANTICA.Share.HideCard"}}{{else}}<i class="fa-solid fa-eye"></i> {{localize "CANTICA.Share.ShareCard"}}{{/if}}</button>
         {{/if}}
       </div>
     </div>

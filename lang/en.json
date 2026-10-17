@@ -513,28 +513,6 @@
       "Q2": "Did you learn something Chorus didn't tell you?",
       "Q3": "Did you bend a rule that should have held?"
     },
-    "Ledger": {
-      "Title": "Ledger",
-      "Keybind": "Open the Ledger",
-      "Search": "Search the ledger: a name, a place, a word…",
-      "All": "All",
-      "Count": "{n} of {total} entries",
-      "Empty": "Nothing under that name. Try fewer letters.",
-      "Share": "Share to chat",
-      "Show": "Show to players",
-      "OpenSheet": "Open",
-      "DragHint": "Drag onto the tabletop",
-      "Full": "Full answer: Inquiry",
-      "Import": "Import Cantica lore",
-      "ImportHint": "Make an NPC for every person and a Scene Card for every place. Anything already imported is left alone."
-    },
-    "Lore": {
-      "GMOnly": "Only a GM can import the lore.",
-      "Missing": "The lore bundle isn't installed. Install a release of the system: it ships with the ledger entries.",
-      "Imported": "Imported {created} new, {existing} already in the world.",
-      "People": "People",
-      "Places": "Places"
-    },
     "Complication": {
       "Label": "Complication",
       "Button": "Complicate (1 Scrutiny)",
@@ -774,6 +752,15 @@
     "Migration": {
       "Speaker": "Gloss",
       "AttuneMoved": "A small notice about {name}'s record: the skills have changed. Attune is retired, and its rating has moved to Composure (now {rating}). There are also three new skills at 0: Aim, Systems and Navigate. Working with the Bound now uses the skill for what you do: Hullcraft for their machines, Lore for the rites, Persuade for one that talks, Composure to hold steady."
+    },
+    "Share": {
+      "ShareCard": "Share with players",
+      "HideCard": "Hide from players",
+      "CardHint": "Let every player open this card and Amend it, or hide it again. Places from a one-shot or People & Places start hidden. Its token on the map is seen either way.",
+      "Shared": "{name} is shared with the players.",
+      "Hidden": "{name} is hidden from the players.",
+      "ShowNpc": "Show to players",
+      "NpcHint": "Put this NPC's picture and name on every player's screen. They never see the stat block."
     }
   }
 }

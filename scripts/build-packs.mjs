@@ -10,7 +10,7 @@ import path from "node:path";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
-import { PACKS, rulesPack, lorePack, oneShotsPack } from "./pack-docs.mjs";
+import { PACKS, rulesPack, lorePack, peoplePlacesPack, oneShotsPack } from "./pack-docs.mjs";
 import { SCENARIO as HURTING_ON_DECK_22 } from "../module/scenarios/hurting-on-deck-22.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,6 +30,7 @@ if (!entries.length) throw new Error("lore-src/ledger-data.js has no entries");
 const built = {
   rules: rulesPack({ entries, briefs, version }),
   lore: lorePack({ entries, kinds, version }),
+  "people-places": peoplePlacesPack({ entries, version }),
   "one-shots": oneShotsPack({ scenarios: [HURTING_ON_DECK_22], version })
 };
 

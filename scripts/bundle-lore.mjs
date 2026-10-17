@@ -1,6 +1,7 @@
 /**
- * Builds lore/ for the system zip: the Ledger's entries and the Station Briefs, from this system's own lore-src/ folder
- * (kept in step with the website by scripts/sync-lore.mjs). No art: the system ships none.
+ * Builds lore/ for the system zip: the Station Briefs, which Register With Gloss reads, from this system's own lore-src/
+ * folder (kept in step with the website by scripts/sync-lore.mjs). The Ledger's entries go into the compendium packs
+ * instead (scripts/build-packs.mjs). No art: the system ships none.
  *
  * Run from anywhere:  node scripts/bundle-lore.mjs   (the release workflow does this)
  */
@@ -27,7 +28,6 @@ const briefs = load("station-briefs-data.js", "STATION_BRIEFS");
 
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
-fs.copyFileSync(path.join(src, "ledger-data.js"), path.join(out, "ledger-data.js"));
 fs.copyFileSync(path.join(src, "station-briefs-data.js"), path.join(out, "station-briefs-data.js"));
 
-console.log(`lore bundled: ${entries.length} entries, ${briefs.length} Station Briefs -> lore/`);
+console.log(`lore bundled: ${briefs.length} Station Briefs -> lore/ (the ${entries.length} Ledger entries go into the packs)`);

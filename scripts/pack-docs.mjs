@@ -5,19 +5,21 @@
  *
  *   rules      Cantica: Rules       journal, one entry per part of the rules, one page per rule, and the Station Briefs
  *   lore       Cantica: Lore        journal, one entry per person, place, group, term and rumor, in folders by kind
+ *   people-places  Cantica: People & Places   GM only: an NPC for every person and a Scene Card for every place
  *   one-shots  Cantica: One-Shots   Adventures, GM only: a one-shot's NPCs, Scene Cards and GM notes, imported in one go
  *
  * No art: every picture is one of Foundry's built-in icons. Ids are made from stable names, so a document keeps its id
  * from release to release, and links between packs keep working.
  */
 import crypto from "node:crypto";
-import { paragraphs, escapeHtml } from "../module/lore-text.mjs";
+import { paragraphs, escapeHtml, entryText } from "../module/lore-text.mjs";
 import { splitTags } from "../module/npc-tags.mjs";
-import { SYSTEM_ID, DEFAULT_NPC_IMG, DEFAULT_CARD_IMG } from "../module/config.mjs";
+import { SYSTEM_ID, DEFAULT_NPC_IMG, DEFAULT_CARD_IMG, CARD_TOKEN } from "../module/config.mjs";
 
 export const PACKS = {
   rules: { label: "Cantica: Rules", type: "JournalEntry" },
   lore: { label: "Cantica: Lore", type: "JournalEntry" },
+  "people-places": { label: "Cantica: People & Places (GM)", type: "Actor" },
   "one-shots": { label: "Cantica: One-Shots (GM)", type: "Adventure" }
 };
 
@@ -186,6 +188,56 @@ export function lorePack({ entries, kinds, version }) {
 }
 
 /**
+ * Stat blocks the design spec itself gives for named people. Everyone else is an ordinary, untagged Minor NPC
+ * (Rating 1): Rating, Tags and Tier are the GM's call.
+ */
+export const SPEC_STATS = {
+  "sister-aiwen": { rating: 2, tier: "major", roleTag: "Liturgist Cantor", otherTag1: "Compline Voice", otherTag2: "Sees Through Flattery" },
+  "orin-fell": { rating: 2, tier: "major", roleTag: "Magistrate of the Forum", otherTag1: "Cited Opinions", otherTag2: "Has Heard It All" }
+};
+
+/** A Scene Card's token, as the system sets it up for a new card: linked, the card's size, a plain plate. */
+const cardToken = name => ({
+  name, actorLink: true, width: CARD_TOKEN.width, height: CARD_TOKEN.height, lockRotation: true,
+  displayName: 0, disposition: 0, sight: { enabled: false }, texture: { src: DEFAULT_CARD_IMG, fit: "fill" }
+});
+
+/**
+ * Cantica: People & Places (GM only). An NPC for every person in the Ledger (hidden from players) and a Scene Card for
+ * every place, in two folders, to drag into a world. Each carries its Ledger entry as notes, and the id of the entry it
+ * came from.
+ */
+export function peoplePlacesPack({ entries, version }) {
+  const byId = Object.fromEntries(entries.map(e => [e.id, e]));
+  const notes = e => [e.tag, entryText(e, byId)].filter(Boolean).join("\n\n");
+  const peopleFolder = stableId("people-places-folder", "people");
+  const placesFolder = stableId("people-places-folder", "places");
+  const actor = (e, n, extra) => {
+    const id = stableId("people-places", e.id);
+    return {
+      _id: id, _key: `!actors!${id}`, name: e.name, sort: (n + 1) * 100000,
+      items: [], effects: [], flags: { [SYSTEM_ID]: { loreId: e.id } }, _stats: stats(version), ...extra
+    };
+  };
+  return [
+    folderDoc({ id: peopleFolder, name: "People", type: "Actor", sort: 100000 }),
+    folderDoc({ id: placesFolder, name: "Places", type: "Actor", sort: 200000 }),
+    ...entries.filter(e => e.kind === "people").map((e, n) => actor(e, n, {
+      type: "npc", img: DEFAULT_NPC_IMG, folder: peopleFolder, ownership: { default: NONE },
+      system: { rating: 1, tier: "minor", notes: notes(e), ...SPEC_STATS[e.id] },
+      prototypeToken: { name: e.name, texture: { src: DEFAULT_NPC_IMG } }
+    })),
+    ...entries.filter(e => e.kind === "places").map((e, n) => actor(e, n, {
+      type: "card", img: DEFAULT_CARD_IMG, folder: placesFolder, ownership: { default: NONE },
+      // Hidden from players until the GM shares the card (see CanticaActor._preCreate).
+      flags: { [SYSTEM_ID]: { loreId: e.id, startHidden: true } },
+      system: { description: notes(e) },
+      prototypeToken: cardToken(e.name)
+    }))
+  ];
+}
+
+/**
  * One scenario as an Adventure: its NPCs (hidden from players), its Scene Cards, and its GM notes (hidden), in folders.
  * Importing it in Foundry creates them all; importing it again offers to update them.
  */
@@ -212,8 +264,9 @@ export function adventureDoc(scenario, version) {
       description: place.description ?? "",
       traits: place.traits.map(name => ({ id: stableId("adventure-trait", scenario.id, place.key, name), name, note: "" }))
     },
-    prototypeToken: { name: place.name, texture: { src: DEFAULT_CARD_IMG } },
-    items: [], effects: [], ownership: { default: OBSERVER }, flags: flags(place.key), _stats: stats(version)
+    prototypeToken: cardToken(place.name),
+    // Hidden from players until the GM shares the card.
+    items: [], effects: [], ownership: { default: NONE }, flags: { [SYSTEM_ID]: { ...flags(place.key)[SYSTEM_ID], startHidden: true } }, _stats: stats(version)
   }));
 
   const notesId = stableId("adventure-journal", scenario.id);

@@ -13,15 +13,28 @@ export default class NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     position: { width: 480, height: 620 },
     window: { resizable: true },
     form: { submitOnChange: true },
-    actions: { takeNotice, withdraw, clearNotice, treatNotice, clearMinors }
+    actions: { takeNotice, withdraw, clearNotice, treatNotice, clearMinors, showToPlayers: NpcSheet.#onShowToPlayers }
   };
 
   static PARTS = {
     sheet: { template: `systems/${SYSTEM_ID}/templates/actor/npc.hbs`, scrollable: [".cantica-body"] }
   };
 
+  /**
+   * GM: put this NPC's picture and name on every player's screen. Players see who they're dealing with, never the
+   * stat block (the NPC itself stays hidden from them).
+   */
+  static async #onShowToPlayers() {
+    if (!game.user.isGM) return;
+    const { ImagePopout } = foundry.applications.apps;
+    const popout = new ImagePopout({ src: this.actor.img, uuid: this.actor.uuid, window: { title: this.actor.name } });
+    await popout.render({ force: true });
+    popout.shareImage();
+  }
+
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
+    context.isGM = game.user.isGM;
     const i18n = game.i18n;
     const system = this.actor.system;
 

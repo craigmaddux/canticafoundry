@@ -2,7 +2,7 @@
 
 A native system for **Cantica**, a generational ark ship run by a tired AI that is also an angel of Order. Experimental: the table plays Savage Worlds, and this is for prototyping the rules in Foundry.
 
-Implements the Cantica rules (see `system-design-changelog.md` in the design notes), plus Scene Cards, Dockets, Register With Gloss, Station Briefs and the Ledger. Targets Foundry **v14** (minimum v13). Optional: the **Dice So Nice** module for amber, white and violet dice.
+Implements the Cantica rules (see `system-design-changelog.md` in the design notes), plus Scene Cards, Dockets, Register With Gloss, Station Briefs, and the rules and lore as compendium packs. Targets Foundry **v14** (minimum v13). Optional: the **Dice So Nice** module for amber, white and violet dice.
 
 ## Install
 
@@ -26,7 +26,7 @@ New releases appear as in-app updates. On Molten, the same URL works; no CloudCo
 - **Hindrances:** two (Personal, Circumstantial), plus a Touched character's Drawback. With any in play the roller earns a **Stamp whatever the dice show**, and the Margin of Error widens to 1–2; on an Error the flaw bites (the GM gains Scrutiny and complicates the scene through it). They never add dice and never touch violet dice. **Greater Bound** (Dissonance on 1–2) is a separate checkbox in the builder, the GM's call for an especially large or volatile Bound.
 - **Gift** (Touched): adds no die. It turns one white die violet, or, if the pool is only the Margin, adds one violet die. If there is no white die to turn, it does nothing extra.
 - **Every Margin of Error** gives the GM **+1 Scrutiny**, and the GM starts each session with one Scrutiny per player (a **Scrutiny** button at the top of the Actors directory reopens its window for anyone; its **Start session** button sets it, tops every player character's Stamps up, and clears their Minor Notices). **Spend Scrutiny** in the same window spends one out loud on the spends that have no button of their own (push a Docket's Deadline, a Minor NPC acting as Major for one exchange, something arriving from offscreen) and posts what it is in the story.
-- **The Hum** (GM only): every Dissonance adds 1 to a hidden counter (always 1, even under Greater Bound). Bands: Still 0–4, Murmur 5–9, Refrain 10–14, Swell 15–19, and at 20 *something gives*. From the Refrain, every violet die causes Dissonance on 1–2. Only the GM gets a window for it (it opens by itself, and there is a **The Hum** button in the Actors directory), and the GM gets a private chat note when it enters a new band. At 20, write the event, then reset it. Players are never shown the Hum or told it exists in the UI; the Ledger doesn't mention it.
+- **The Hum** (GM only): every Dissonance adds 1 to a hidden counter (always 1, even under Greater Bound). Bands: Still 0–4, Murmur 5–9, Refrain 10–14, Swell 15–19, and at 20 *something gives*. From the Refrain, every violet die causes Dissonance on 1–2. Only the GM gets a window for it (it opens by itself, and there is a **The Hum** button in the Actors directory), and the GM gets a private chat note when it enters a new band. At 20, write the event, then reset it. Players are never shown the Hum or told it exists in the UI; the Rules and Lore packs don't mention it.
 - **Stamps:** **Expedite** is a checkbox in the roll dialog (+1 die before you roll, once per roll); **Refile** is a button on a roll's chat card; **Countersign** (give one of your Stamps to an ally, to use as their Expedite or Refile) is a button on the sheet. Cite a Clause was removed in spec v0.11. The GM can **Award** a Trait for free (after a major story moment), and **Resolve** beside a Hindrance turns it into a Trait and asks for the new Hindrance. **Reclassify** is a checkbox when you take a Major directly (it lands as a Minor; a Minor that overflows can't be Reclassified), and **Withdraw** is a button on the Notice track (narrate your exit, skip the Final box, earn a Stamp). You start each session with 2, +1 at Grades III, VI and IX.
 - **Notices:** one track of two Minor boxes, two Major boxes and a Final box. Each Notice is named, typed **B** (Body) or **S** (Standing), and has a *clears by* line.
 - **Grade** follows lifetime Tenure earned (every 6). **Skills** run 0–2 and cost 1, then 3 more. **Commendations** arrive at Grades II, V and VIII; one of the rule-breaks is *a second Trait also applies*.
@@ -86,24 +86,22 @@ Two ways to see a card at the table, and you can use both:
 
 ## Compendiums
 
-The system has three compendium packs, in a **Cantica** folder of the Compendium tab:
+The system has four compendium packs, in a **Cantica** folder of the Compendium tab:
 
 - **Cantica: Rules** (everyone): the rules in seven parts (rolling the dice, your character, the skills, Stamps and Scrutiny, conflict and harm, scenes, growing), one page per rule, and the **Station Briefs**, one page each.
-- **Cantica: Lore** (everyone): every person, place, group, term and rumor in the Ledger, in folders by kind.
+- **Cantica: Lore** (everyone): every person, place, group, term and rumor, in folders by kind.
+- **Cantica: People & Places (GM)** (GMs only): an **NPC** for every person (Rating 1, Minor, Tags for you to set, except the spec's own stat blocks for Sister Aiwen and Magistrate Orin Fell) and a **Scene Card** for every place, each with its lore as notes. Drag one into the world, or right-click and Import.
 - **Cantica: One-Shots (GM)** (GMs only): see Scenarios.
 
-Links between entries are Foundry links, so they open the right page across packs. The packs are built from the same Ledger as the website at each release (`scripts/build-packs.mjs`), so they update with the system. Anything you import into a world is a copy and doesn't change when the system updates.
+Links between entries are Foundry links, so they open the right page across packs. The packs are built from the same lore as the website's Ledger at each release (`scripts/build-packs.mjs`), so they update with the system. Anything you import into a world is a copy and doesn't change when the system updates.
 
-## The Ledger and the lore
+## Sharing with players, and the lore
 
-Gloss's searchable entries, inside Foundry: open it from the **Ledger** button in the Actors directory or on the Scrutiny window, or with `game.cantica.openLedger()`. The same entries are in the Rules and Lore compendiums.
+**Hidden until shared.** NPCs are hidden from players. A Scene Card the GM makes is open to everyone, but places that come from a pack (a one-shot's, or People & Places) arrive hidden. On a card's sheet the GM has **Share with players** (players can then open it and Amend it) and **Hide from players**; its token on the map is seen either way. On an NPC's sheet, **Show to players** puts their picture and name on everyone's screen without revealing the stat block.
 
-- **Search** and filter by People, Places, Groups, Terms, Rumors and Rules. Entries link to each other.
-- **Share to chat** posts an entry to the table in Gloss's voice.
-- **Import Cantica lore** (GM, one click) makes an **NPC** for every person and a **Scene Card** for every place, in a "Cantica" folder. Rating, Tags and Tier are left for you to set. Running it again only adds what's new; nothing you've edited is touched.
 **No art.** The system ships no pictures: imported NPCs and Scene Cards start with Foundry's built-in plain icons, for you to replace with your own. Worlds that used the pictures earlier versions bundled are switched to the plain icons the first time a GM opens them (your own pictures are left alone).
 
-The lore (the Ledger's entries and the Station Briefs) is written for the website, and this repository keeps its own copy in `lore-src/` so it builds on its own. When the website's lore changes, run `node scripts/sync-lore.mjs --site <path to the website checkout>` and commit the result (it copies the words, never the website's pictures). Releases bundle `lore-src/` into the system; for a local copy of the repo, run `node scripts/bundle-lore.mjs` first.
+The lore (the website Ledger's entries and the Station Briefs) is written for the website, and this repository keeps its own copy in `lore-src/` so it builds on its own. The Ledger window that used to show it inside Foundry is retired: the compendium packs carry it now. When the website's lore changes, run `node scripts/sync-lore.mjs --site <path to the website checkout>` and commit the result (it copies the words, never the website's pictures). Releases bundle the Station Briefs (Register With Gloss reads them) and build the packs; for a local copy of the repo, run `node scripts/bundle-lore.mjs` and `npm run packs` first.
 
 ## Not in this version
 
@@ -115,7 +113,7 @@ There is no build step for the code. This repository is the system: symlink or c
 
 ```
 npm test                          # unit tests: dice rules, Grade table, odds table, Notice track, scenes, lore search, Briefs
-node scripts/bundle-lore.mjs      # build lore/ (ledger data and Briefs) from lore-src/
+node scripts/bundle-lore.mjs      # build lore/ (the Station Briefs) from lore-src/
 npm install && npm run packs      # build packs/ (Rules, Lore, One-Shots) with the Foundry CLI
 node scripts/sync-lore.mjs --site ../cantica   # refresh lore-src/ from the website repository
 git tag v0.11.0 && git push --tags   # builds system.json + system.zip on GitHub
