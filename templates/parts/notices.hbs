@@ -28,6 +28,7 @@
   <div class="track-actions">
     <button type="button" data-action="takeNotice" data-kind="minor" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Track.TakeMinor"}}</button>
     <button type="button" data-action="takeNotice" data-kind="major" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Track.TakeMajor"}}</button>
+    {{#if canWithdraw}}<button type="button" data-action="withdraw" title="{{localize 'CANTICA.Track.WithdrawHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Track.Withdraw"}}</button>{{/if}}
     <button type="button" data-action="clearMinors" title="{{localize 'CANTICA.Track.ClearMinorsHint'}}" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Track.ClearMinors"}}</button>
   </div>
 </section>

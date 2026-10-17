@@ -137,11 +137,22 @@
 
   <fieldset>
     <legend>{{localize "CANTICA.Pool.Gear"}}</legend>
+    {{#if boundGear.length}}
+    <div class="field bound-gear">
+      <label for="pool-bound">{{localize "CANTICA.Pool.Bound"}}</label>
+      <select id="pool-bound" name="boundGear">
+        <option value="">{{localize "CANTICA.Pool.NoBoundGear"}}</option>
+        {{#each boundGear}}<option value="{{name}}">{{name}}</option>{{/each}}
+      </select>
+      <p class="hint">{{localize "CANTICA.Pool.BoundNote"}}</p>
+    </div>
+    {{else}}
     <label class="check bound-gear">
       <input type="checkbox" name="bound">
       <span class="check-label">{{localize "CANTICA.Pool.Bound"}}</span>
       <span class="check-note">{{localize "CANTICA.Pool.BoundNote"}}</span>
     </label>
+    {{/if}}
     <p class="hint">{{localize "CANTICA.Pool.GearHint"}}</p>
   </fieldset>
 

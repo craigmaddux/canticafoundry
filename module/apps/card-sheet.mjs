@@ -2,6 +2,7 @@ import { SYSTEM_ID } from "../config.mjs";
 import { addTrait, setActiveCard, amendScene } from "../cards.mjs";
 import { isShown, setShown, openPanel } from "../scene-panel.mjs";
 import * as docket from "../docket.mjs";
+import * as proceedings from "../proceedings.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -31,7 +32,10 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       docketAdjust: CardSheet.#onDocketAdjust,
       docketRound: CardSheet.#onDocketRound,
       docketPush: CardSheet.#onDocketPush,
-      docketSize: CardSheet.#onDocketSize
+      docketSize: CardSheet.#onDocketSize,
+      openProceedings: CardSheet.#onOpenProceedings,
+      closeProceedings: CardSheet.#onCloseProceedings,
+      removeResult: CardSheet.#onRemoveResult
     }
   };
 
@@ -63,6 +67,24 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       statusLabel: i18n.localize(`CANTICA.Docket.Status.${docket.status(d)}`),
       pips: Array.from({ length: Math.min(d.boxes, 40) }, (_, i) => ({ filled: i < docket.filledBoxes(d) })),
       players: game.users.filter(user => !user.isGM && user.active).length || 4
+    };
+
+    // Summary Proceedings, for the GM only.
+    const p = system.proceedings;
+    const proceedingsStatus = proceedings.status(p);
+    context.proceedings = {
+      ...p,
+      rolled: proceedings.rolled(p),
+      approved: proceedings.approvedCount(p),
+      status: proceedingsStatus,
+      statusLabel: i18n.localize(`CANTICA.Proceedings.Status.${proceedingsStatus}`),
+      results: p.results.map(r => ({
+        who: r.who,
+        tierLabel: i18n.localize(`CANTICA.Tier.${r.tier}`),
+        tier: r.tier,
+        story: i18n.localize(`CANTICA.Proceedings.Story.${proceedings.STORY[r.tier]}`)
+      })),
+      players: game.users.filter(user => !user.isGM && user.active).length || 3
     };
 
     // Keep each Trait's real position: the form fields are named by array index.
@@ -150,6 +172,25 @@ export default class CardSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     if (!game.user.isGM) return;
     const players = this.element.querySelector("#docket-players")?.value;
     await this.actor.update({ "system.docket.boxes": docket.sizeFor(players, target.dataset.level) });
+  }
+
+  /** GM: open Summary Proceedings in this scene, for the players at the table. */
+  static async #onOpenProceedings() {
+    if (!game.user.isGM) return;
+    const p = this.actor.system.proceedings;
+    const group = Number(this.element.querySelector("#proceedings-group")?.value) || p.group;
+    await this.actor.update({ "system.proceedings": proceedings.open({ name: p.name, rating: p.rating, group }) });
+  }
+
+  /** GM: close it. */
+  static async #onCloseProceedings() {
+    if (game.user.isGM) await this.actor.update({ "system.proceedings.open": false });
+  }
+
+  /** GM: take one player's result back. */
+  static async #onRemoveResult(event, target) {
+    if (!game.user.isGM) return;
+    await this.actor.update({ "system.proceedings": proceedings.remove(this.actor.toObject().system.proceedings, target.dataset.who) });
   }
 
   /** GM: put this card on everyone's screen, or take it off. */

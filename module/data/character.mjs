@@ -67,6 +67,15 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
         ruleBreak: new StringField({ required: true, choices: RULE_BREAKS, initial: "trait2" })
       })),
 
+      // Gear is permission, not a bonus: the right tools let you roll at all, and it never adds dice. Bound gear
+      // (anything running on divine infrastructure) turns one white die violet, like the Gift. Exceptional gear is a Trait.
+      gear: new ArrayField(new SchemaField({
+        id: new StringField({ required: true, blank: false }),
+        name: text(),
+        note: text(),
+        bound: new BooleanField({ initial: false })
+      })),
+
       // The log: Tenure earned, purchases, Compline answers, a highlight when a Grade is reached.
       history: new ArrayField(new SchemaField({
         id: new StringField({ required: true, blank: false }),

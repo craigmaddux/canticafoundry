@@ -89,6 +89,16 @@ export function placeNotice(track, tier, kind, notice) {
   return { track: next, slot: target, overflowed, out: target === "final" };
 }
 
+/**
+ * Reclassify (a Stamp spent as a Notice lands): it lands one step lower. A Major lands as a Minor; a Minor doesn't land
+ * at all. Returns the kind that lands, or null for none.
+ * @param {"minor"|"major"} kind
+ * @returns {"minor"|"major"|null}
+ */
+export function reclassify(kind) {
+  return kind === "major" ? "minor" : null;
+}
+
 /** End of session: clear all Minor Notices. */
 export function clearMinors(track) {
   const next = structuredClone({ ...emptyTrack(), ...track });

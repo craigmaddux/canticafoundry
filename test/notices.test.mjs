@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  emptyTrack, placeNotice, clearMinors, slotsFor, isFilled, minorsFull, defaultClearsBy, migrateTrack, slotKind
+  emptyTrack, placeNotice, clearMinors, slotsFor, isFilled, minorsFull, defaultClearsBy, migrateTrack, slotKind, reclassify
 } from "../module/notices.mjs";
 
 const minor = (track, name = "Bruised Ribs", tier = "major", type = "B") => placeNotice(track, tier, "minor", { name, type });
@@ -13,6 +13,14 @@ const withMinors = () => {
   for (const n of ["One", "Two"]) t = minor(t, n).track;
   return t;
 };
+
+test("Reclassify: a Major lands as a Minor, and a Minor doesn't land at all", () => {
+  assert.equal(reclassify("major"), "minor");
+  assert.equal(reclassify("minor"), null);
+  // a reclassified Major takes a Minor box, not a Major one
+  const landed = placeNotice(emptyTrack(), "major", reclassify("major"), { name: "Cracked Wrist", type: "B" });
+  assert.equal(landed.slot, "minor1");
+});
 
 test("Minor Notices fill the two Minor boxes in order", () => {
   const a = minor(emptyTrack(), "Flustered");

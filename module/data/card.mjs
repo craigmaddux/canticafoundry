@@ -26,6 +26,18 @@ export default class CardData extends foundry.abstract.TypeDataModel {
         successes: new NumberField({ required: true, nullable: false, integer: true, min: 0, initial: 0 })
       }),
 
+      // Summary Proceedings in this scene: one roll per player against a Rating (see proceedings.mjs). GM only.
+      proceedings: new SchemaField({
+        open: new BooleanField({ initial: false }),
+        name: new StringField({ required: true, blank: true, initial: "" }),
+        rating: new NumberField({ required: true, nullable: false, integer: true, min: 1, max: 4, initial: 1 }),
+        group: new NumberField({ required: true, nullable: false, integer: true, min: 1, initial: 3 }),
+        results: new ArrayField(new SchemaField({
+          who: new StringField({ required: true, blank: false }),
+          tier: new StringField({ required: true, choices: ["commended", "approved", "conditions", "denied"], initial: "approved" })
+        }))
+      }),
+
       // Just Traits: a phrase, and an optional note on how it plays. (Older cards also stored an
       // effect, "applies automatically" and "GM only"; those are dropped.)
       traits: new ArrayField(new SchemaField({

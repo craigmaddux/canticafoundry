@@ -76,6 +76,28 @@
           </div>
         </section>
 
+        <section class="panel gear">
+          <h2>{{localize "CANTICA.Gear.Heading"}}
+            <button type="button" class="add" data-action="addGear" {{#unless editable}}disabled{{/unless}}>{{localize "CANTICA.Gear.Add"}}</button>
+          </h2>
+          <p class="hint">{{localize "CANTICA.Gear.Hint"}}</p>
+          {{#each gear}}
+          <div class="gear-item">
+            <input type="text" name="system.gear.{{index}}.name" value="{{name}}" placeholder="{{localize 'CANTICA.Gear.NamePlaceholder'}}" {{#unless @root.editable}}disabled{{/unless}}>
+            <input type="text" name="system.gear.{{index}}.note" value="{{note}}" placeholder="{{localize 'CANTICA.Gear.NotePlaceholder'}}" {{#unless @root.editable}}disabled{{/unless}}>
+            <div class="gear-row">
+              <label class="check bound-toggle" title="{{localize 'CANTICA.Gear.BoundHint'}}">
+                <input type="checkbox" name="system.gear.{{index}}.bound" {{checked bound}} {{#unless @root.editable}}disabled{{/unless}}>
+                <span>{{localize "CANTICA.Gear.Bound"}}</span>
+              </label>
+              <button type="button" data-action="deleteGear" data-id="{{id}}" title="{{localize 'CANTICA.Gear.Delete'}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          {{else}}
+          <p class="empty">{{localize "CANTICA.Gear.None"}}</p>
+          {{/each}}
+        </section>
+
         {{> "systems/cantica/templates/parts/notices.hbs"}}
 
         {{#if commendationSlots}}

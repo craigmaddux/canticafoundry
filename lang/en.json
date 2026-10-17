@@ -170,7 +170,19 @@
       "TreatHint": "Treated: this Notice is dealt with and its box clears.",
       "EscalateTitle": "Escalate to Major?",
       "Escalate": "Both Minor boxes are full. This Notice escalates to a Major. Continue?",
-      "EscalateOut": "Both Minor boxes and both Major boxes are full. This Notice takes you out of the scene (Final). Continue?"
+      "EscalateOut": "Both Minor boxes and both Major boxes are full. This Notice takes you out of the scene (Final). Continue?",
+      "Reclassify": "Reclassify (spend a Stamp)",
+      "ReclassifyHint": "Downgrade this Notice as it lands: a Major lands as a Minor, a Minor doesn't land at all.",
+      "Reclassified": "Reclassified with a Stamp: one step lower.",
+      "ReclassifiedAway": "{name} spends a Stamp to Reclassify: \"{notice}\" does not land.",
+      "Withdraw": "Withdraw",
+      "WithdrawTitle": "Withdraw from the scene",
+      "WithdrawHint": "Before a roll that could take you out, concede. Narrate your own exit, skip the Final box, and earn a Stamp.",
+      "WithdrawNpcHint": "Before a roll that could take them out, they concede: they narrate their own exit and skip the Final box.",
+      "WithdrawHow": "How do you leave?",
+      "Withdrew": "Withdraws from the scene",
+      "WithdrewNote": "A clean exit: the Final box is skipped.",
+      "WithdrewStamp": "+1 Stamp"
     },
     "Rating": {
       "1": "ordinary",
@@ -253,7 +265,8 @@
       "NoticeOnTargetNote": "You are using a Notice an NPC carries against them: +1 die.",
       "TurnOrder": "Turn order roll",
       "TurnOrderHint": "Everyone rolls Notice; the most successes goes first. The Margin's Grace and Error don't count.",
-      "TurnOrderNote": "Turn order: the Margin's Grace and Error don't count."
+      "TurnOrderNote": "Turn order: the Margin's Grace and Error don't count.",
+      "NoBoundGear": "None in play"
     },
     "Roll": {
       "Margin": "Margin",
@@ -624,6 +637,45 @@
       "Hint": "Import the one-shot from the GM Primer: its people (hidden from players), its places as Scene Cards, and a GM-only journal. Safe to run again.",
       "GMOnly": "Only a GM can import a scenario.",
       "Imported": "{name}: {npcs} NPCs and {places} places added, {filled} existing NPCs given stat blocks, {journal} journal."
+    },
+    "Gear": {
+      "Heading": "Gear",
+      "Add": "Add",
+      "Delete": "Remove",
+      "Hint": "Gear is permission, not a bonus: the right tools let you roll at all, and it never adds dice. Bound gear (anything running on divine infrastructure) turns one white die violet. Exceptional gear is a Trait.",
+      "NamePlaceholder": "Diagnostic scanner",
+      "NotePlaceholder": "what it lets you do",
+      "Bound": "Bound",
+      "BoundHint": "Runs on divine infrastructure: in a roll it turns one white die violet.",
+      "None": "No gear recorded."
+    },
+    "Proceedings": {
+      "Heading": "Summary Proceedings",
+      "Hint": "A whole situation settled with one roll per player against a Rating: a chase through Stem-Side, a day surveying a world. If at least half the group reaches Approved, the scene is won. Only you see this.",
+      "Open": "Open",
+      "Close": "Close",
+      "Situation": "The situation",
+      "SituationPlaceholder": "A chase through Stem-Side",
+      "Group": "Players rolling",
+      "Approved": "Approved or better",
+      "Rolled": "rolled",
+      "Remove": "Take this result back",
+      "NoResults": "No one has rolled yet.",
+      "CountHint": "On each roll's chat card, use Add to count it as that player's one roll. Then narrate it as a montage built from everyone's rolls.",
+      "Count": "Add to Summary Proceedings ({tier})",
+      "Update": "Update Summary Proceedings ({tier})",
+      "CountTitle": "Record this roll as the player's one roll in the scene's Summary Proceedings. Only you see this button.",
+      "Status": {
+        "open": "open",
+        "won": "scene won",
+        "lost": "scene lost"
+      },
+      "Story": {
+        "carry": "carries the moment, plus a bonus (find something, save someone)",
+        "contribute": "contributes cleanly",
+        "price": "contributes, but takes a Minor Notice",
+        "slip": "takes a Major, or the thing they were protecting slips"
+      }
     }
   }
 }

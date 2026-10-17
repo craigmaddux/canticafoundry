@@ -5,7 +5,7 @@ import PoolDialog from "./pool-dialog.mjs";
 import { findBrief, commendationSuggestion } from "../briefs.mjs";
 import { escapeHtml } from "../lore-text.mjs";
 import { openRegistration, holds, focusRegistration } from "./registration.mjs";
-import { trackContext, takeNotice, clearNotice, treatNotice, clearMinors } from "./notice-track.mjs";
+import { trackContext, takeNotice, clearNotice, treatNotice, clearMinors, withdraw } from "./notice-track.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -36,11 +36,14 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       countersign: CharacterSheet.#onCountersign,
       addCommendation: CharacterSheet.#onAddCommendation,
       takeBriefCommendation: CharacterSheet.#onTakeBriefCommendation,
+      addGear: CharacterSheet.#onAddGear,
+      deleteGear: CharacterSheet.#onDeleteGear,
       deleteCommendation: CharacterSheet.#onDeleteCommendation,
       awardTenure: CharacterSheet.#onAwardTenure,
       compline: CharacterSheet.#onCompline,
       arcMilestone: CharacterSheet.#onArcMilestone,
       takeNotice,
+      withdraw,
       clearNotice,
       treatNotice,
       clearMinors
@@ -147,6 +150,8 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
       : null;
 
     context.track = trackContext(this.actor);
+    context.canWithdraw = true;
+    context.gear = system.gear.map((item, index) => ({ ...item, index }));
 
     // History, newest first. A Grade-up is highlighted.
     context.history = [...system.history].sort((a, b) => b.at - a.at).map(entry => ({
@@ -171,6 +176,12 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
     if (edited) {
       const current = this.actor.toObject().system.commendations;
       data.system.commendations = current.map((entry, i) => ({ ...entry, ...(edited[i] ?? {}) }));
+    }
+    // Gear is named by array index the same way.
+    const gear = data.system?.gear;
+    if (gear) {
+      const current = this.actor.toObject().system.gear;
+      data.system.gear = current.map((entry, i) => ({ ...entry, ...(gear[i] ?? {}) }));
     }
     return data;
   }
@@ -321,6 +332,15 @@ export default class CharacterSheet extends HandlebarsApplicationMixin(ActorShee
     if (!suggestion || system.commendations.length >= system.commendationSlots) return;
     const entry = { id: foundry.utils.randomID(), name: suggestion.name, situation: suggestion.situation, ruleBreak: suggestion.ruleBreak };
     await this.actor.update({ "system.commendations": [...this.actor.toObject().system.commendations, entry] });
+  }
+
+  static async #onAddGear() {
+    const entry = { id: foundry.utils.randomID(), name: "", note: "", bound: false };
+    await this.actor.update({ "system.gear": [...this.actor.toObject().system.gear, entry] });
+  }
+
+  static async #onDeleteGear(event, target) {
+    await this.actor.update({ "system.gear": this.actor.toObject().system.gear.filter(item => item.id !== target.dataset.id) });
   }
 
   static async #onDeleteCommendation(event, target) {

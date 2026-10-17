@@ -26,7 +26,7 @@ New releases appear as in-app updates. On Molten, the same URL works; no CloudCo
 - **Gift** (Touched): adds no die. It turns one white die violet, or, if the pool is only the Margin, adds one violet die. If there is no white die to turn, it does nothing extra.
 - **Every Margin of Error** gives the GM **+1 Scrutiny**, and the GM starts each session with one Scrutiny per player (the Scrutiny window's **Start session** button sets it, and tops every player character's Stamps up).
 - **The Hum** (GM only): every Dissonance adds 1 to a hidden counter (always 1, even when a Hindrance widens Dissonance to 1–2). Bands: Still 0–4, Murmur 5–9, Refrain 10–14, Swell 15–19, and at 20 *something gives*. From the Refrain, every violet die causes Dissonance on 1–2. Only the GM gets a window for it (it opens by itself, and there is a **The Hum** button in the Actors directory), and the GM gets a private chat note when it enters a new band. At 20, write the event, then reset it. Players are never shown the Hum or told it exists in the UI; the Ledger doesn't mention it.
-- **Stamps:** **Expedite** is a checkbox in the roll dialog (+1 die before you roll, once per roll); **Refile** is a button on a roll's chat card; **Countersign** (give one of your Stamps to an ally, to use as their Expedite or Refile) and Cite a Clause are buttons on the sheet. You start each session with 2, +1 at Grades III, VI and IX.
+- **Stamps:** **Expedite** is a checkbox in the roll dialog (+1 die before you roll, once per roll); **Refile** is a button on a roll's chat card; **Countersign** (give one of your Stamps to an ally, to use as their Expedite or Refile) and Cite a Clause are buttons on the sheet. **Reclassify** is a checkbox when you take a Notice (a Major lands as a Minor, a Minor doesn't land), and **Withdraw** is a button on the Notice track (narrate your exit, skip the Final box, earn a Stamp). You start each session with 2, +1 at Grades III, VI and IX.
 - **Notices:** one track of two Minor boxes, two Major boxes and a Final box. Each Notice is named, typed **B** (Body) or **S** (Standing), and has a *clears by* line.
 - **Grade** follows lifetime Tenure earned (every 6). **Skills** run 0–2 and cost 1, then 3 more. **Commendations** arrive at Grades II, V and VIII; one of the rule-breaks is *a second Trait also applies*.
 
@@ -56,6 +56,14 @@ Gloss's words are all in `module/registration-steps.mjs`: edit the text between 
 ## Dockets
 
 A **Docket** is a job that builds up over several rounds against a Deadline (venting a compartment before the jump). It lives on a Scene Card, in a **Docket** panel on the card's sheet that **only the GM sees**: the job, the boxes, the Deadline in rounds, the round, and the successes. *Size for N players* sets the boxes (Routine 3, Standard 4, Hard 5 each for a 3-round Deadline). When a roll is made in a scene with an open Docket, the GM gets a **Count** button on the roll's chat card: every success fills a box (the card is counted by what it shows now, so a later Refile or Complication changes the count by the difference), and a Margin of Error on it moves the Deadline up a round. The table never sees the boxes or the Deadline. It sees only the running tally of successes, on the card's token (a small SUCCESSES tag in the corner) and on its panel.
+
+## Summary Proceedings
+
+A whole situation settled with **one roll per player** against a Rating (a chase through Stem-Side). Like a Docket it lives on a Scene Card, in a panel only the GM sees: the situation, the Rating, and how many players are rolling. On each roll's chat card the GM gets an **Add to Summary Proceedings** button that records the roll as that player's one result (rolling again, or a Refile that changes the tier, replaces it). The panel lists each result with its part in the story (Commended carries the moment, Approved contributes, With Conditions takes a Minor Notice, Denied takes a Major or something slips) and says when the scene is **won** (at least half the group reached Approved) or **lost** (it can no longer happen).
+
+## Gear
+
+Each character has a **Gear** list on the Record tab: a name, a note, and a **Bound** flag. Gear never adds dice (the right tools let you roll at all). In the roll builder, if the character has Bound gear, a menu picks which one is in play and it turns one white die violet, as the Gift does; the card names it.
 
 ## Scenarios
 

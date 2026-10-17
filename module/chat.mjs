@@ -5,6 +5,7 @@ import { escapeHtml } from "./lore-text.mjs";
 import { canRefile, canRaise, refile, raiseRating } from "./card-actions.mjs";
 import { shownOutcome } from "./roll-card.mjs";
 import { countRoll } from "./docket.mjs";
+import { record as recordResult } from "./proceedings.mjs";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -28,6 +29,7 @@ export function onRenderChatMessage(message, html) {
   complicate(message, html, flags);
   raise(message, html, flags);
   docketCount(message, html, flags);
+  proceedingsCount(message, html, flags);
 
   // Hide the whole row if none of its buttons is for this person.
   const bar = html.querySelector(".card-actions");
@@ -175,6 +177,38 @@ function docketCount(message, html, flags) {
     await live.update({ "system.docket": result.docket });
     await message.update({ [`flags.${SYSTEM_ID}.docket`]: { counted: result.counted, errorCounted: result.errorCounted } });
     if (result.pushed) ui.notifications.info(i18n.localize("CANTICA.Docket.Pushed"));
+  });
+}
+
+/**
+ * GM only: when the scene this roll was made in has Summary Proceedings open, add the roll as that player's one
+ * result. Rolling again (or a Refile that changes the tier) replaces it.
+ */
+function proceedingsCount(message, html, flags) {
+  const button = html.querySelector('[data-action="proceedings"]');
+  if (!button) return;
+  const state = flags.state;
+  const card = game.actors.get(state?.sceneId);
+  const p = card?.system?.proceedings;
+  if (!game.user.isGM || !state || !p?.open) return;
+
+  const tier = shownOutcome(state).tier;
+  const counted = flags.proceedings?.tier;
+  if (counted === tier) return;
+
+  const i18n = game.i18n;
+  button.textContent = i18n.format(counted ? "CANTICA.Proceedings.Update" : "CANTICA.Proceedings.Count", { tier: i18n.localize(`CANTICA.Tier.${tier}`) });
+  button.title = i18n.localize("CANTICA.Proceedings.CountTitle");
+  button.hidden = false;
+
+  button.addEventListener("click", async event => {
+    event.preventDefault();
+    button.disabled = true;
+    const live = game.actors.get(state.sceneId);
+    const current = message.flags[SYSTEM_ID]?.state ?? state;
+    const now = shownOutcome(current).tier;
+    await live.update({ "system.proceedings": recordResult(live.toObject().system.proceedings, current.actorName, now) });
+    await message.update({ [`flags.${SYSTEM_ID}.proceedings`]: { tier: now } });
   });
 }
 

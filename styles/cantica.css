@@ -915,3 +915,22 @@
 .scene-tally span { color: var(--ink-dim); font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; }
 .scene-tally strong { color: var(--warm-bright); font-family: var(--font-mono); font-size: 1.1rem; font-weight: 500; margin-left: 0.4rem; }
 .docket-panel .docket-fields input { box-sizing: border-box; min-width: 0; width: 100%; }
+
+/* v0.11: Gear on the sheet. */
+.gear-item { border-top: 1px solid var(--rule); display: grid; gap: 0.3rem; padding: 0.5rem 0; }
+.gear-row { align-items: center; display: flex; gap: 0.6rem; justify-content: space-between; }
+.gear-row button { height: auto; line-height: 1.3; padding: 0.15rem 0.5rem; }
+.bound-toggle span { color: var(--bound); font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; }
+
+/* v0.11: Summary Proceedings (GM only). */
+.proceedings-results { display: grid; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
+.proceedings-results li { align-items: baseline; color: var(--ink-soft); display: flex; flex-wrap: wrap; font-size: 0.85rem; gap: 0.5rem; }
+.proceedings-results li strong { color: var(--ink-bright); font-weight: 500; }
+.proceedings-results .tier { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.proceedings-results .tier-commended, .proceedings-results .tier-approved { color: var(--bound); }
+.proceedings-results .tier-conditions { color: var(--warm); }
+.proceedings-results .tier-denied { color: var(--warn); }
+.proceedings-results .story { flex: 1 1 12rem; font-style: italic; }
+.proceedings-results button { height: auto; line-height: 1.2; margin-left: auto; padding: 0.1rem 0.4rem; }
+.docket-board.docket-won { border-color: var(--bound); }
+.docket-board.docket-lost { border-color: var(--warn); }

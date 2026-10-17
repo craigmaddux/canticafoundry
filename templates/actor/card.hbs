@@ -79,6 +79,39 @@
     </section>
     {{/if}}
 
+    {{#if isGM}}
+    <section class="panel proceedings-panel">
+      <h2>
+        {{localize "CANTICA.Proceedings.Heading"}}
+        {{#if proceedings.open}}
+        <button type="button" class="add" data-action="closeProceedings">{{localize "CANTICA.Proceedings.Close"}}</button>
+        {{else}}
+        <button type="button" class="add" data-action="openProceedings">{{localize "CANTICA.Proceedings.Open"}}</button>
+        {{/if}}
+      </h2>
+      <p class="hint">{{localize "CANTICA.Proceedings.Hint"}}</p>
+      <div class="docket-fields">
+        <label>{{localize "CANTICA.Proceedings.Situation"}}<input type="text" name="system.proceedings.name" value="{{proceedings.name}}" placeholder="{{localize 'CANTICA.Proceedings.SituationPlaceholder'}}"></label>
+        <label>{{localize "CANTICA.Npc.Rating"}}<input type="number" name="system.proceedings.rating" value="{{proceedings.rating}}" min="1" max="4"></label>
+        <label>{{localize "CANTICA.Proceedings.Group"}}<input type="number" id="proceedings-group" name="system.proceedings.group" value="{{proceedings.group}}" min="1"></label>
+      </div>
+      {{#if proceedings.open}}
+      <div class="docket-board docket-{{proceedings.status}}">
+        <div class="docket-line"><strong>{{proceedings.approved}}</strong> {{localize "CANTICA.Proceedings.Approved"}} · {{proceedings.rolled}} / {{proceedings.group}} {{localize "CANTICA.Proceedings.Rolled"}} · <span class="docket-status">{{proceedings.statusLabel}}</span></div>
+        <ul class="proceedings-results">
+          {{#each proceedings.results}}
+          <li><strong>{{who}}</strong> <span class="tier tier-{{tier}}">{{tierLabel}}</span> <span class="story">{{story}}</span>
+            <button type="button" data-action="removeResult" data-who="{{who}}" title="{{localize 'CANTICA.Proceedings.Remove'}}"><i class="fa-solid fa-xmark"></i></button></li>
+          {{else}}
+          <li class="empty">{{localize "CANTICA.Proceedings.NoResults"}}</li>
+          {{/each}}
+        </ul>
+        <p class="hint">{{localize "CANTICA.Proceedings.CountHint"}}</p>
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
     <section class="panel scene-traits-panel">
       <h2>
         {{localize "CANTICA.Card.Traits"}}

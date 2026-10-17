@@ -1,6 +1,6 @@
 import { SYSTEM_ID, NPC_TIERS } from "../config.mjs";
 import { RATINGS } from "../rules.mjs";
-import { trackContext, takeNotice, clearNotice, treatNotice, clearMinors } from "./notice-track.mjs";
+import { trackContext, takeNotice, clearNotice, treatNotice, clearMinors, withdraw } from "./notice-track.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -12,7 +12,7 @@ export default class NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     position: { width: 480, height: 620 },
     window: { resizable: true },
     form: { submitOnChange: true },
-    actions: { takeNotice, clearNotice, treatNotice, clearMinors }
+    actions: { takeNotice, withdraw, clearNotice, treatNotice, clearMinors }
   };
 
   static PARTS = {
@@ -45,6 +45,8 @@ export default class NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     }));
     context.tierHint = i18n.localize(`CANTICA.NpcTier.${system.tier}Hint`);
     context.track = trackContext(this.actor);
+    // Only a Major NPC has a full track to withdraw from.
+    context.canWithdraw = system.tier === "major";
     return context;
   }
 }

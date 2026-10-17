@@ -57,6 +57,7 @@ export async function rollExtraDie() {
  * @param {boolean} [input.initiative]      A turn-order roll: the Margin's Grace and Error don't count.
  * @param {boolean} [input.expedite]        Spend a Stamp before the roll for +1 die (one per roll).
  * @param {number} [input.bound]            Bound gear in play (0 or 1): turns one white die violet.
+ * @param {string} [input.boundName]        Which of the character's Bound gear it is (shown on the card).
  * @param {string} [input.sceneId]          The Scene Card the roll happens in.
  * @param {string} [input.sceneName]
  * @param {{id: string, name: string}} [input.sceneTrait] The one scene Trait picked for +1 die.
@@ -153,7 +154,7 @@ export async function rollPool(actor, input) {
   if (input.help) factors.push(i18n.localize("CANTICA.Roll.Help"));
   if (input.noticeOnTarget) factors.push(i18n.localize("CANTICA.Roll.NoticeOnTarget"));
   if (input.obstacles) factors.push(`−${input.obstacles} ${i18n.localize("CANTICA.Roll.Obstacles")}`);
-  if (input.bound) factors.push(i18n.localize("CANTICA.Roll.BoundSource"));
+  if (input.bound) factors.push(input.boundName || i18n.localize("CANTICA.Roll.BoundSource"));
   if (sceneTrait) factors.push(`+1 ${sceneTrait.name}`);
 
   const ladder = i18n.has(`CANTICA.Difficulty.${difficulty}`) ? i18n.localize(`CANTICA.Difficulty.${difficulty}`) : "";

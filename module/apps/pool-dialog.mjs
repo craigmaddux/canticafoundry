@@ -70,6 +70,7 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
         }))
       })),
       hasTraits: this.actor.rollTraits.length > 0,
+      boundGear: this.actor.type === "character" ? this.actor.system.gear.filter(item => item.bound && item.name).map(item => ({ name: item.name })) : [],
       penalties: [0, 1, 2, 3].map(n => ({ value: n, label: n ? `−${n}` : i18n.localize("CANTICA.Pool.NoPenalty"), checked: n === 0 })),
       stamps: this.actor.system.stamps,
       canExpedite: this.actor.system.stamps > 0,
@@ -199,7 +200,9 @@ export default class PoolDialog extends HandlebarsApplicationMixin(ApplicationV2
       gift: Boolean(form.elements.gift?.checked),
       encumbranceKeys: checked("encumbrance").map(el => el.value),
       commendations: checked("commendation").map(el => ({ id: el.value, name: el.dataset.name, ruleBreak: el.dataset.break })),
-      bound: form.elements.bound?.checked ? 1 : 0,
+      // Bound gear: pick one of yours, or (with none recorded) tick the box. It turns one white die violet.
+      bound: form.elements.boundGear ? (form.elements.boundGear.value ? 1 : 0) : (form.elements.bound?.checked ? 1 : 0),
+      boundName: form.elements.boundGear?.value ?? "",
       expedite: Boolean(form.elements.expedite?.checked),
       help: Boolean(form.elements.help?.checked),
       noticeOnTarget: Boolean(form.elements.noticeOnTarget?.checked),
