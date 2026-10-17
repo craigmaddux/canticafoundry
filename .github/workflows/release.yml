@@ -32,11 +32,20 @@ jobs:
              '.version = $v | .url = $url | .manifest = $manifest | .download = $download' \
              system.json > system.tmp && mv system.tmp system.json
 
-      - name: Bundle the lore (ledger entries, Station Briefs and their art)
+      - name: Bundle the lore (ledger entries and Station Briefs; the system ships no art)
         run: node scripts/bundle-lore.mjs
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build the compendium packs (Rules, Lore, One-Shots)
+        run: |
+          npm ci
+          node scripts/build-packs.mjs
+
       - name: Build system.zip
-        run: zip -r system.zip system.json cantica.mjs module templates styles lang assets samples lore
+        run: zip -r system.zip system.json cantica.mjs module templates styles lang samples lore packs
 
       - name: Publish release
         uses: softprops/action-gh-release@v2

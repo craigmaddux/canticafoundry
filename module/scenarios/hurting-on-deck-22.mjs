@@ -1,5 +1,6 @@
 /**
- * Hurting on Deck 22: the one-shot from the GM Primer (Grade I, about four hours). The data for the importer:
+ * Hurting on Deck 22: the one-shot from the GM Primer (Grade I, about four hours). The data for its Adventure in the
+ * GM-only One-Shots compendium (scripts/pack-docs.mjs):
  * its people (NPCs with Rating, Tier and Tags), its places (Scene Cards with their scene Traits), and a journal of
  * GM notes. Pure data, no Foundry dependency; a test checks it against the GM Primer's rules.
  *
@@ -9,6 +10,8 @@
 export const SCENARIO = {
   id: "hurting-on-deck-22",
   name: "Hurting on Deck 22",
+  caption: "A one-shot for Grade I characters · about 4 hours",
+  description: "<p>Recycler 22-C-4 has kept Block 22-C breathing for two hundred cycles, and this week the air is getting thinner. The jump is in six hours. Importing brings in its nine people (hidden from players), seven places as Scene Cards, and the GM's notes (hidden).</p>",
 
   /** Rating, Tier (background, minor, major) and Tags. The first (or `action`, 1-3) is the Role Tag; the rest are the other Tags. */
   npcs: [

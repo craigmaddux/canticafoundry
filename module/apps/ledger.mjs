@@ -1,6 +1,6 @@
 import { SYSTEM_ID } from "../config.mjs";
 import { escapeHtml, linkify, paragraphs, unlink, search, norm } from "../lore-text.mjs";
-import { loreEntries, loreKinds, loreById, loreActors, loreImage, loreAvailable, importLore } from "../lore.mjs";
+import { loreEntries, loreKinds, loreById, loreActors, loreAvailable, importLore } from "../lore.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -123,19 +123,13 @@ export default class Ledger extends HandlebarsApplicationMixin(ApplicationV2) {
     let body = "";
     if (open) {
       const byId = loreById();
-      const art = loreImage(e);
       const doc = this.#actors.get(e.id);
       const link = (id, label) => `<a class="xref" data-act="xref" data-id="${id}">${label}</a>`;
       const text = linkify(paragraphs(e.body), byId, link);
 
-      // The picture: draggable when it has an actor or card to drag.
-      const img = art
-        ? `<img class="entry-img ${doc ? "draggable" : ""}" src="${art}" alt="${escapeHtml(e.name)}" ${doc ? `draggable="true" data-uuid="${doc.uuid}" title="${i18n.localize("CANTICA.Ledger.DragHint")}"` : ""}>`
-        : "";
 
       const buttons = [
         `<button type="button" data-act="share" data-id="${e.id}"><i class="fa-solid fa-comment"></i> ${i18n.localize("CANTICA.Ledger.Share")}</button>`,
-        game.user.isGM && art ? `<button type="button" data-act="show" data-id="${e.id}"><i class="fa-solid fa-image"></i> ${i18n.localize("CANTICA.Ledger.Show")}</button>` : "",
         game.user.isGM && doc ? `<button type="button" data-act="sheet" data-id="${e.id}"><i class="fa-solid fa-id-card"></i> ${i18n.localize("CANTICA.Ledger.OpenSheet")}</button>` : ""
       ].join("");
 
@@ -145,7 +139,7 @@ export default class Ledger extends HandlebarsApplicationMixin(ApplicationV2) {
         return `<a class="full" href="${CONCIERGE}#qa-${pad}" target="_blank" rel="noopener">${i18n.localize("CANTICA.Ledger.Full")} № ${pad} ↗</a>`;
       }).join("");
 
-      body = `<div class="entry-body">${img}<div class="entry-text">${text}</div>
+      body = `<div class="entry-body"><div class="entry-text">${text}</div>
         <div class="entry-foot"><span class="entry-actions">${buttons}</span>${full}</div></div>`;
     }
 
@@ -179,8 +173,6 @@ export default class Ledger extends HandlebarsApplicationMixin(ApplicationV2) {
       this.element.querySelector(`#lore-${id}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
     } else if (act === "share" && entry) {
       await this.#share(entry);
-    } else if (act === "show" && entry) {
-      await this.#show(entry);
     } else if (act === "sheet") {
       this.#actors.get(id)?.sheet.render(true);
     }
@@ -201,20 +193,11 @@ export default class Ledger extends HandlebarsApplicationMixin(ApplicationV2) {
       name: entry.name,
       kind: kindLabel,
       tag: entry.tag && norm(entry.tag) !== norm(kindLabel) ? entry.tag : "",
-      img: loreImage(entry),
       // Links inside the text become plain words: they can't be followed from chat.
       text: unlink(paragraphs(entry.body), byId)
     });
     const ChatMessage = CONFIG.ChatMessage.documentClass;
     await ChatMessage.create({ speaker: { alias: "Gloss" }, content });
-  }
-
-  /** GM: pop the picture up on every player's screen. */
-  async #show(entry) {
-    const { ImagePopout } = foundry.applications.apps;
-    const popout = new ImagePopout({ src: loreImage(entry), window: { title: entry.name } });
-    await popout.render({ force: true });
-    popout.shareImage();
   }
 
   static async #onImport() {

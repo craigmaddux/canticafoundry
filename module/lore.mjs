@@ -1,4 +1,4 @@
-import { SYSTEM_ID } from "./config.mjs";
+import { SYSTEM_ID, DEFAULT_NPC_IMG, DEFAULT_CARD_IMG } from "./config.mjs";
 import { buildIndex, entryText } from "./lore-text.mjs";
 
 /**
@@ -9,9 +9,6 @@ import { buildIndex, entryText } from "./lore-text.mjs";
  * so the Ledger window can link to it, drag it onto the tabletop, and show its picture to players.
  */
 
-export const LORE_ART = `systems/${SYSTEM_ID}/lore/assets/`;
-const FALLBACK_NPC_ART = "icons/svg/mystery-man.svg";
-const FALLBACK_CARD_ART = `systems/${SYSTEM_ID}/assets/emblem.svg`;
 
 /**
  * Stat blocks the design spec itself gives for named people. Everyone else arrives as an ordinary,
@@ -35,9 +32,6 @@ export const loreEntries = () => window.LEDGER ?? [];
 export const loreKinds = () => window.LEDGER_KINDS ?? [];
 export const loreById = () => byId;
 export const loreAvailable = () => loreEntries().length > 0;
-
-/** The picture for an entry, as a path inside the system. Art is bundled flat under lore/assets/. */
-export const loreImage = entry => (entry.img ? LORE_ART + entry.img.split("/").pop() : null);
 
 /** Map of entry id to the world actor made from it. */
 export function loreActors() {
@@ -76,7 +70,6 @@ export async function importLore() {
   const data = [];
   for (const entry of loreEntries()) {
     if (existing.has(entry.id)) continue;
-    const art = loreImage(entry);
     const flags = { [SYSTEM_ID]: { loreId: entry.id } };
     const text = [entry.tag, entryText(entry, byId)].filter(Boolean).join("\n\n");
 
@@ -84,14 +77,14 @@ export async function importLore() {
       // Rating, Tags and Tier are the GM's call, except where the spec gives a stat block.
       data.push({
         name: entry.name, type: "npc", folder: peopleFolder.id, flags,
-        img: art ?? FALLBACK_NPC_ART,
+        img: DEFAULT_NPC_IMG,
         system: { rating: 1, tier: "minor", notes: text, ...SPEC_STATS[entry.id] },
-        prototypeToken: { name: entry.name, texture: { src: art ?? FALLBACK_NPC_ART } }
+        prototypeToken: { name: entry.name, texture: { src: DEFAULT_NPC_IMG } }
       });
     } else if (entry.kind === "places") {
       data.push({
         name: entry.name, type: "card", folder: placesFolder.id, flags,
-        img: art ?? FALLBACK_CARD_ART,
+        img: DEFAULT_CARD_IMG,
         system: { description: text }
       });
     }

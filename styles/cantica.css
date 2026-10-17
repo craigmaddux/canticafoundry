@@ -644,7 +644,6 @@
 /* ═══════════════ chat cards: lore and Grade ═══════════════ */
 
 .cantica-card.lore-card { border-left-color: var(--bound); }
-.cantica-card .lore-img { border: 1px solid var(--rule-bright); max-height: 14rem; max-width: 100%; object-fit: cover; }
 .cantica-card .lore-text p { margin: 0 0 0.5rem; }
 .cantica-card .lore-text ul { margin: 0 0 0.5rem 1rem; padding: 0; }
 .cantica-card.grade-card .verdict { font-size: 1.1rem; }
@@ -689,9 +688,6 @@
 .ledger-results .entry.open .chev { color: var(--warm); transform: rotate(90deg); }
 
 .ledger-results .entry-body { color: var(--ink); font-size: 0.85rem; line-height: 1.55; padding: 0.1rem 0.8rem 0.9rem 4.5rem; }
-.ledger-results .entry-img { border: 1px solid var(--rule-bright); float: right; margin: 0.2rem 0 0.5rem 0.9rem; max-width: 10rem; width: 36%; }
-.ledger-results .entry-img.draggable { cursor: grab; }
-.ledger-results .entry-img.draggable:hover { border-color: var(--warm); box-shadow: 0 0 10px var(--warm-glow); }
 .ledger-results .entry-text p { margin: 0 0 0.6rem; }
 .ledger-results .entry-text ul { list-style: none; margin: 0 0 0.6rem; padding: 0; }
 .ledger-results .entry-text li { margin-bottom: 0.3rem; padding-left: 0.9rem; position: relative; }

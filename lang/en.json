@@ -687,12 +687,6 @@
       "Pushed": "A Margin of Error: the Docket's Deadline moves up a round.",
       "Tally": "Successes so far"
     },
-    "Scenario": {
-      "Button": "Hurting on Deck 22",
-      "Hint": "Import the one-shot from the GM Primer: its people (hidden from players), its places as Scene Cards, and a GM-only journal. Safe to run again.",
-      "GMOnly": "Only a GM can import a scenario.",
-      "Imported": "{name}: {npcs} NPCs and {places} places added, {filled} existing NPCs given stat blocks, {journal} journal."
-    },
     "Gear": {
       "Heading": "Gear",
       "Add": "Add",

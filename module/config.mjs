@@ -38,6 +38,16 @@ export const ENCUMBRANCES = ["personal", "circumstantial"];
 export const CARD_TOKEN = { width: 12, height: 9 };
 export const OLD_CARD_TOKEN = { width: 4, height: 3 };
 
+/**
+ * The system ships no art of its own. NPCs and Scene Cards start with Foundry's built-in plain icons; give them your
+ * own pictures in the world.
+ */
+export const DEFAULT_NPC_IMG = "icons/svg/mystery-man.svg";
+export const DEFAULT_CARD_IMG = "icons/svg/village.svg";
+
+/** Pictures earlier versions pointed at, which are no longer in the system (see migrations.mjs). */
+export const RETIRED_ART = [`systems/${SYSTEM_ID}/lore/assets/`, `systems/${SYSTEM_ID}/assets/`];
+
 /** NPC tiers: how much of the Notice track they have. */
 export const NPC_TIERS = ["background", "minor", "major"];
 

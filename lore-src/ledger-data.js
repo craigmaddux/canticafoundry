@@ -29,61 +29,53 @@ window.LEDGER = [
 
 /* ═══════════════════════════ PEOPLE ═══════════════════════════ */
 
-{ id: "maren-selde", kind: "people", name: "Maren Selde", tag: "Founder", inquiry: 12, img: "assets/maren-selde.jpg",
-  aka: ["author of the checklist"],
+{ id: "maren-selde", kind: "people", name: "Maren Selde", tag: "Founder", inquiry: 12,  aka: ["author of the checklist"],
   summary: "Primary author of the habitability checklist.",
   body: [
     "Not a scientist but an administrator. She wrote [[the-checklist|the checklist]] after watching the home world come apart: exhaustively, at three in the morning, including everything she could think of.",
     "An Anchorage is dedicated to her. The institutional [[outbound|Outbound]] call her a saint; the agitator wing calls her something else. Both assessments are, by available evidence, accurate."
   ] },
 
-{ id: "ostren", kind: "people", name: "Ostren", tag: "Founder", inquiry: [12, 2], img: "assets/ostren.jpg",
-  aka: ["the bottling", "engineer-priest"],
+{ id: "ostren", kind: "people", name: "Ostren", tag: "Founder", inquiry: [12, 2],  aka: ["the bottling", "engineer-priest"],
   summary: "Engineer-negotiator of the original Bottling. One name only.",
   body: [
     "Whether it is a first name, a last name, a title or a nickname that stuck is not recorded. Ostren was the engineer-priest who negotiated with the servants who would become the ship's [[the-bound|Bound]]: years of individual conversations, and a disproportionate number agreed to come.",
     "The [[liturgists|Liturgists]] have canonized Ostren. The engineers have their own version, involving less candle-lighting."
   ] },
 
-{ id: "havre-doss", kind: "people", name: "Havre Doss", tag: "Founding councilor", inquiry: 12, img: "assets/havre-doss.jpg",
-  aka: ["dissenting vote", "dissent"],
+{ id: "havre-doss", kind: "people", name: "Havre Doss", tag: "Founding councilor", inquiry: 12,  aka: ["dissenting vote", "dissent"],
   summary: "The dissenting vote against the strict checklist. Stayed aboard anyway.",
   body: [
     "He voted against the strict version of [[the-checklist|the checklist]], not from carelessness but because he thought the governance around it would calcify. His recorded objection: the first generation would be grateful for the stubbornness, and the fourteenth would be imprisoned by it. He was outvoted, and he stayed aboard.",
     "The port-aft Anchorage is dedicated to him. His descendants live in [[old-forecastle|Old Forecastle]] and are, without exception, institutional [[outbound|Outbound]]."
   ] },
 
-{ id: "amara-solis", kind: "people", name: "Amara Solis", tag: "First Speaker", inquiry: 12, img: "assets/amara-solis.jpg",
-  aka: ["speaker", "council"],
+{ id: "amara-solis", kind: "people", name: "Amara Solis", tag: "First Speaker", inquiry: 12,  aka: ["speaker", "council"],
   summary: "The human voice of Chorus before the Council. Known for her pauses.",
   body: [
     "She delivers [[chorus|Chorus]]'s announcements to the assembled [[the-council|Council]], a position that has gathered more institutional gravity than anyone planned for. Eleven years in the post.",
     "She reads Chorus better than almost anyone alive, not through special access but through very careful listening. Gloss finds her quietly formidable."
   ] },
 
-{ id: "tamsin-voy", kind: "people", name: "Tamsin Voy", tag: "Chief Engineer", inquiry: [12, 10], img: "assets/tamsin-voy.jpg",
-  aka: ["engineering chief"],
+{ id: "tamsin-voy", kind: "people", name: "Tamsin Voy", tag: "Chief Engineer", inquiry: [12, 10],  aka: ["engineering chief"],
   summary: "Fourth of her family to run Engineering. The ship's practical guarantor.",
   body: [
     "The post is not hereditary; the Voy family simply keeps producing the best candidates. She is fully aware that the ship's survival rests on her desk.",
     "The [[retirement-society|Retirement Society]] has been denied access to [[engineering|Engineering]] four times, and all four denials came from her. She is [[hullbound|Hullbound]] by instinct and exhausted by responsibility in a way that has become, over time, indistinguishable from competence."
   ] },
 
-{ id: "pell-adoc", kind: "people", name: "Pell Adoc", tag: "Navigator-General", inquiry: 12, img: "assets/pell-adoc.jpg",
-  summary: "Chairs the Navigators Guild and presents jump recommendations.",
+{ id: "pell-adoc", kind: "people", name: "Pell Adoc", tag: "Navigator-General", inquiry: 12,  summary: "Chairs the Navigators Guild and presents jump recommendations.",
   body: [
     "He brings the [[navigators|Navigators]]' jump recommendations to [[chorus|Chorus]] and the [[the-council|Council]]. Technically brilliant, and very good at performing precision."
   ] },
 
-{ id: "kem-vardas", kind: "people", name: "Kem Vardas", tag: "Prioress, House of the First Threshold", inquiry: 12, img: "assets/kem-vardas.jpg",
-  aka: ["prioress"],
+{ id: "kem-vardas", kind: "people", name: "Kem Vardas", tag: "Prioress, House of the First Threshold", inquiry: 12,  aka: ["prioress"],
   summary: "Leads the most prestigious Liturgist house. Seventy-one.",
   body: [
     "Engine-clergy since she was nineteen. She is the conservative institutional force that keeps the more fervent [[liturgists|Liturgist]] wings from provoking a crisis, and she manages it the way you manage any complicated household: by not looking too closely at certain things."
   ] },
 
-{ id: "orin-fell", kind: "people", name: "Orin Fell", tag: "Senior Magistrate, the Forum", inquiry: 12, img: "assets/orin-fell.jpg",
-  aka: ["magistrate", "judge"],
+{ id: "orin-fell", kind: "people", name: "Orin Fell", tag: "Senior Magistrate, the Forum", inquiry: 12,  aka: ["magistrate", "judge"],
   summary: "Highest human adjudicator, with almost no actual power.",
   body: [
     "Chorus overrides what Chorus wants to override, so the bench is prestigious and nearly powerless. Sixteen years on it have given him a meditative relationship with institutional futility.",
@@ -131,7 +123,6 @@ window.LEDGER = [
 /* ═══════════════════════════ PLACES ═══════════════════════════ */
 
 { id: "old-forecastle", kind: "places", name: "Old Forecastle", tag: "Forward residential district", inquiry: 13,
-  img: "assets/old-forecastle-the-founder-era-promenade-district.jpg",
   aka: ["promenade", "founder era", "forward"],
   summary: "The founders' showpiece district. Everyone lowers their voice.",
   body: [
@@ -141,7 +132,6 @@ window.LEDGER = [
   ] },
 
 { id: "garden-stair", kind: "places", name: "Garden Stair", tag: "Vertical neighborhood", inquiry: 14,
-  img: "assets/garden-stair-a-vertical-neighborhood.jpg",
   aka: ["landing", "column", "stair"],
   summary: "A spiral stair around a column overgrown with greenery. People choose it.",
   body: [
@@ -151,7 +141,6 @@ window.LEDGER = [
   ] },
 
 { id: "stem-side-markets", kind: "places", name: "Stem-Side Markets", tag: "Mixed-use district", inquiry: 15,
-  img: "assets/stem-side-markets.webp",
   aka: ["stem side", "stemside", "buy things", "shopping", "cargo bay"],
   summary: "The largest mixed-use neighborhood, around an original cargo bay.",
   body: [
@@ -159,8 +148,7 @@ window.LEDGER = [
     "Three markets to know: [[bay-floor|the Bay Floor]], [[upper-gallery|the Upper Gallery]] and [[wet-market|the Wet Market]]. The people here want the lights to work, the food fresh and the noise ordinances enforced, which makes Stem-Side the unofficial heart of the [[hullbound|Hullbound]]. It also has a bar with a very shy jukebox: see [[the-bar|the Bar]]."
   ] },
 
-{ id: "bay-floor", kind: "places", name: "The Bay Floor", tag: "Stem-Side market", inquiry: 15, img: "assets/stem-side-markets.webp",
-  aka: ["haggling", "negotiate"],
+{ id: "bay-floor", kind: "places", name: "The Bay Floor", tag: "Stem-Side market", inquiry: 15,  aka: ["haggling", "negotiate"],
   summary: "On the old cargo deck. Open 22 hours a day. Everything is negotiated.",
   body: [
     "Everything is negotiated here, including items with posted prices. Don't take the posted prices personally; they are a starting point for conversation, and the conversation is reportedly the best part. Part of [[stem-side-markets|Stem-Side Markets]]."
@@ -181,7 +169,6 @@ window.LEDGER = [
   ] },
 
 { id: "engineering", kind: "places", name: "Engineering", tag: "The work of keeping the ship alive", inquiry: 10,
-  img: "assets/engineering-primary-floor.jpg",
   aka: ["the cathedral", "the floor", "primary floor", "power", "life support"],
   summary: "Power, life support, structure, and the largest of the Bound.",
   body: [
@@ -404,7 +391,6 @@ window.LEDGER = [
   ] },
 
 { id: "the-lottery", kind: "terms", name: "The Lottery", tag: "Monthly selection", inquiry: 11,
-  img: "assets/a-survey-shuttle-over-a-candidate-world.jpg",
   aka: ["external operations", "survey", "exemption", "drawn"],
   summary: "Random monthly selection of who goes outside the ship. Mandatory, ages 17 to 60.",
   body: [

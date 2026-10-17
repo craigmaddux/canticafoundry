@@ -15,7 +15,8 @@ const FOLDER = "cantica-cards";
 let lastWarned = 0;
 
 /** Placeholder pictures that mean "no art set yet". */
-const hasArt = img => Boolean(img) && !/(mystery-man|emblem)\.svg$/.test(img);
+// Foundry's own icons (the defaults) are not art: the card is painted as a plain plate instead.
+const hasArt = img => Boolean(img) && !/^icons\/svg\//.test(img) && !/(mystery-man|emblem)\.svg$/.test(img);
 
 const isCard = token => token?.actor?.type === "card";
 const isPainter = () => game.user.isActiveGM;

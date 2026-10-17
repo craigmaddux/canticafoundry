@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Cantica game system for Foundry VTT. No build step; this file only runs the rules tests.",
+  "description": "Cantica game system for Foundry VTT. No build step for the code; the Foundry CLI compiles the compendium packs.",
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "packs": "node scripts/build-packs.mjs"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "3.0.4"
   }
 }

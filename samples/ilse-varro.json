@@ -1,7 +1,7 @@
 {
   "name": "Ilse Varro",
   "type": "character",
-  "img": "systems/cantica/assets/emblem.svg",
+  "img": "icons/svg/mystery-man.svg",
   "system": {
     "skills": {
       "athletics": 1,

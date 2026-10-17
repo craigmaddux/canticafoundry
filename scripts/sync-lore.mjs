@@ -1,6 +1,6 @@
 /**
  * Copies the website's lore into this system's lore-src/ folder: the Ledger's entries (ledger-data.js), the Station Briefs
- * (station-briefs-data.js), and the art the Ledger's entries use. The website is where the lore is written; this system
+ * (station-briefs-data.js). Never the art: the system ships none. The website is where the lore is written; this system
  * keeps its own copy so it builds and releases on its own, without the website repository.
  *
  * Run it when the website's lore changes:
@@ -30,25 +30,11 @@ vm.runInContext(fs.readFileSync(ledger, "utf8"), ctx);
 const entries = ctx.window.LEDGER ?? [];
 if (!entries.length) throw new Error("ledger-data.js has no entries");
 
-fs.mkdirSync(path.join(dest, "assets"), { recursive: true });
-fs.copyFileSync(ledger, path.join(dest, "ledger-data.js"));
+fs.mkdirSync(dest, { recursive: true });
+// The system ships no art: the website's pictures stay on the website, and the entries' img fields are dropped.
+const stripArt = text => text.replace(/[ \t]*img: "[^"]*",[ \t]*(\r?\n)?/g, "").replace(/,[ \t]*img: "[^"]*"/g, "");
+fs.writeFileSync(path.join(dest, "ledger-data.js"), stripArt(fs.readFileSync(ledger, "utf8")));
 fs.copyFileSync(briefs, path.join(dest, "station-briefs-data.js"));
+fs.rmSync(path.join(dest, "assets"), { recursive: true, force: true });
 
-const wanted = new Set();
-const missing = [];
-for (const entry of entries) {
-  if (!entry.img) continue;
-  const from = path.join(site, entry.img);
-  const name = path.basename(entry.img);
-  if (!fs.existsSync(from)) { missing.push(`${entry.id}: ${entry.img}`); continue; }
-  fs.copyFileSync(from, path.join(dest, "assets", name));
-  wanted.add(name);
-}
-if (missing.length) throw new Error("Missing art:\n  " + missing.join("\n  "));
-
-// Art no entry uses any more is dropped.
-for (const file of fs.readdirSync(path.join(dest, "assets"))) {
-  if (!wanted.has(file)) fs.rmSync(path.join(dest, "assets", file));
-}
-
-console.log(`lore synced from ${site}: ${entries.length} entries, ${wanted.size} images -> lore-src/`);
+console.log(`lore synced from ${site}: ${entries.length} entries (no art) -> lore-src/`);

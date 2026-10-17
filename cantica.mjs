@@ -20,11 +20,10 @@ import Ledger from "./module/apps/ledger.mjs";
 import { registerCardArt, repaintCards, resizeCards } from "./module/card-art.mjs";
 import { openRegistration, hold, release, holds } from "./module/apps/registration.mjs";
 import { initLore, importLore } from "./module/lore.mjs";
-import { importScenario } from "./module/scenario.mjs";
 import { registerCards, listenForCards, activeCard, detectCard, setActiveCard } from "./module/cards.mjs";
 import { registerScrutiny, listenForScrutiny, showScrutiny, getScrutiny, gainScrutiny } from "./module/scrutiny.mjs";
 import { registerHum, listenForHum, showHum, getHum } from "./module/hum-tracker.mjs";
-import { announceSkillMoves } from "./module/migrations.mjs";
+import { announceSkillMoves, retireBundledArt } from "./module/migrations.mjs";
 
 Hooks.once("init", () => {
   console.log(`${SYSTEM_ID} | Initializing the Cantica system`);
@@ -84,7 +83,7 @@ Hooks.once("init", () => {
   });
 
   // Handy for macros: game.cantica.rollPool(actor, { skill: "hullcraft" }) or new game.cantica.PoolDialog({ actor }).
-  game.cantica = { rules, notices, rollPool, rollTurnOrder, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, importScenario, repaintCards, resizeCards, register: openRegistration };
+  game.cantica = { rules, notices, rollPool, rollTurnOrder, PoolDialog, showScrutiny, getScrutiny, gainScrutiny, showHum, getHum, activeCard, detectCard, setActiveCard, openLedger, importLore, repaintCards, resizeCards, register: openRegistration };
 
   return foundry.applications.handlebars.loadTemplates([
     `systems/${SYSTEM_ID}/templates/actor/character.hbs`,
@@ -111,6 +110,7 @@ Hooks.once("ready", () => {
   if (game.settings.get(SYSTEM_ID, "showScrutiny")) showScrutiny();
   showHum(); // does nothing unless you are the GM
   announceSkillMoves(); // the active GM only
+  retireBundledArt(); // the active GM only
 });
 
 // Dice So Nice is optional; its hook simply never fires without it.
@@ -118,7 +118,8 @@ Hooks.once("diceSoNiceReady", dice3d => registerDiceColors(dice3d));
 
 Hooks.on("renderChatMessageHTML", onRenderChatMessage);
 
-// A Ledger button in the Actors directory header.
+// The Actors directory header: the Ledger and Scrutiny for everyone, the Hum for the GM. One-shots are in the GM-only
+// One-Shots compendium.
 Hooks.on("renderActorDirectory", (app, html) => {
   const root = html instanceof HTMLElement ? html : html?.[0];
   const actions = root?.querySelector(".header-actions");
@@ -140,15 +141,14 @@ Hooks.on("renderActorDirectory", (app, html) => {
     actions.append(hum);
   }
 
-  // The one-shot's people, places and notes, in one click (GM only).
-  if (game.user.isGM && !actions.querySelector(".cantica-scenario-button")) {
-    const scenario = document.createElement("button");
-    scenario.type = "button";
-    scenario.className = "cantica-scenario-button";
-    scenario.innerHTML = `<i class="fa-solid fa-file-import"></i> ${game.i18n.localize("CANTICA.Scenario.Button")}`;
-    scenario.title = game.i18n.localize("CANTICA.Scenario.Hint");
-    scenario.addEventListener("click", () => game.cantica.importScenario());
-    actions.append(scenario);
+  // Scrutiny is public: anyone can reopen its window after closing it.
+  if (!actions.querySelector(".cantica-scrutiny-button")) {
+    const scrutiny = document.createElement("button");
+    scrutiny.type = "button";
+    scrutiny.className = "cantica-scrutiny-button";
+    scrutiny.innerHTML = `<i class="fa-solid fa-eye"></i> ${game.i18n.localize("CANTICA.Scrutiny.Label")}`;
+    scrutiny.addEventListener("click", () => game.cantica.showScrutiny());
+    actions.append(scrutiny);
   }
 });
 
